@@ -18,9 +18,12 @@ import time
 from openai import (
     APIConnectionError,
     APIStatusError,
+    AuthenticationError,
     BadRequestError,
     InternalServerError,
+    NotFoundError,
     OpenAI,
+    PermissionDeniedError,
     RateLimitError,
 )
 
@@ -42,6 +45,8 @@ class LLMClient:
         if missing:
             raise SystemExit(f"Missing required environment variable(s): {', '.join(missing)}. "
                              "Copy .env.example to .env and fill them in.")
+        if key == "sk-your-key-here":
+            raise SystemExit("OPENAI_API_KEY is still the example value from .env.example — paste your real key into .env.")
         base = (os.environ.get("OPENAI_BASE_URL") or "").rstrip("/") or None
         self.model = model
         self.client = OpenAI(api_key=key, base_url=base)
@@ -82,6 +87,13 @@ class LLMClient:
                     kwargs["max_completion_tokens"] = kwargs.pop("max_tokens")
                     continue
                 raise
+            except AuthenticationError:
+                raise SystemExit("The LLM provider rejected the API key (401) — check OPENAI_API_KEY in .env.")
+            except PermissionDeniedError as exc:
+                raise SystemExit(f"The LLM provider denied access (403) — check the key's permissions. {exc}")
+            except NotFoundError:
+                raise SystemExit(f"The LLM provider doesn't serve model '{self.model}' (404) — check OPENAI_MODEL "
+                                 "(and that OPENAI_BASE_URL points at the right endpoint).")
             except (RateLimitError, APIConnectionError, InternalServerError, APIStatusError) as exc:
                 last_exc = exc
                 attempt += 1
