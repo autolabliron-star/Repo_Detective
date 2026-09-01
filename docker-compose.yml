@@ -1,0 +1,16 @@
+services:
+  detective:
+    build: .
+    # `docker compose run --rm detective investigate <url>` — run allocates a TTY,
+    # which the human-in-the-loop budget approval needs. Plain `up` prints usage.
+    stdin_open: true
+    tty: true
+    environment:
+      # Interpolated from your shell or from ./.env (compose loads it automatically).
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - DETECTIVE_BUDGET=${DETECTIVE_BUDGET:-}
+    volumes:
+      - ./investigations:/app/investigations
