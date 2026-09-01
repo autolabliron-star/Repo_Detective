@@ -54,15 +54,16 @@ class LLMClient:
         self._max_tokens_param = "max_tokens"
 
     def complete(self, messages: list[dict], tools: list[dict] | None = None,
-                 budget=None, max_tokens: int = 1024):
+                 budget=None, max_tokens: int = 1024, tool_choice=None):
         """Returns the assistant message. `budget` is a duck-typed object with
-        .remaining() and .count() (the Investigation) — None means uncounted."""
+        .remaining() and .count() (the Investigation) — None means uncounted.
+        `tool_choice` may force a specific function (the wrap-up call)."""
         check_budget(budget)
 
         kwargs: dict = {"model": self.model, "messages": messages}
         if tools:
             kwargs["tools"] = tools
-            kwargs["tool_choice"] = "auto"
+            kwargs["tool_choice"] = tool_choice or "auto"
         if self._supports_temperature:
             kwargs["temperature"] = 0.2
         kwargs[self._max_tokens_param] = max_tokens
@@ -85,6 +86,9 @@ class LLMClient:
                 if "max_tokens" in text and self._max_tokens_param == "max_tokens":
                     self._max_tokens_param = "max_completion_tokens"
                     kwargs["max_completion_tokens"] = kwargs.pop("max_tokens")
+                    continue
+                if "tool_choice" in text and kwargs.get("tool_choice") not in (None, "auto"):
+                    kwargs["tool_choice"] = "auto"  # provider doesn't support forced choice
                     continue
                 raise
             except AuthenticationError:

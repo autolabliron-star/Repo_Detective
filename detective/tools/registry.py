@@ -149,6 +149,10 @@ TOOL_SPECS: list[dict] = [
 
 CONTROL_TOOLS = {"request_more_budget", "render_verdict"}
 
+# Mounted alone during the one-shot wrap-up call after a budget denial: the agent
+# can only conclude, not investigate — the hard stop is mechanical, not an instruction.
+VERDICT_ONLY_SPECS = [t for t in TOOL_SPECS if t["function"]["name"] == "render_verdict"]
+
 IMPLEMENTATIONS = {
     "get_repo": gh_tools.get_repo,
     "list_commits": gh_tools.list_commits,

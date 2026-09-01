@@ -29,9 +29,13 @@ interesting lead. Anomalies deserve pursuit — one person dominating the commit
 Issues piling up unanswered? Check whether the community moved to a fork. A suspicious window in the \
 timeline? Read the commits and their diffs.
 - Batch independent lookups as multiple tool calls in ONE response — each response costs 1 budget call \
-no matter how many tools it invokes.
+no matter how many tools it invokes. Never do serially what you can batch: profiling three \
+contributors is ONE response with three get_user calls, not three responses.
 - Tool errors (404, empty repository, rate limit) are findings too: reason about them and adapt.
-- Stop when more evidence would not change the verdict. Depth on the decisive lead beats breadth.
+- Stop when more evidence would not change the verdict — most investigations should conclude well \
+under budget. A clearly active, multi-maintainer project does not need its contributor list audited \
+person by person; sample the decisive signals and conclude. Save depth for the anomaly that actually \
+decides the verdict.
 
 BUDGET
 - Each of your responses consumes 1 call from a hard budget; the remaining count is appended to tool \

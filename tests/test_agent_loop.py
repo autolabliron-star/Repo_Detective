@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 from detective.agent import run_investigation
-from detective.investigation import Investigation, STATUS_CONCLUDED
+from detective.investigation import Investigation, STATUS_CONCLUDED, STATUS_NO_VERDICT
 from detective.llm import check_budget
 
 
@@ -35,8 +35,10 @@ class FakeLLM:
     def __init__(self, script):
         self.script = list(script)
 
-    def complete(self, messages, tools=None, budget=None, max_tokens=1024):
+    def complete(self, messages, tools=None, budget=None, max_tokens=1024, tool_choice=None):
         check_budget(budget)
+        self.last_tools = tools
+        self.last_tool_choice = tool_choice
         msg = self.script.pop(0)
         if budget is not None:
             budget.count()
@@ -132,6 +134,28 @@ class TestAgentLoop(unittest.TestCase):
         self.assertEqual(inv.budget_used(), 2)
         self.assertEqual(inv.budget_remaining(), 0)
         self.assertEqual(inv.latest_verdict()["decision"], "adopt")
+
+    def test_no_budget_creep_when_agent_ignores_wrapup(self):
+        """Regression: a denial grants ONE wrap-up call. An agent that tries to keep
+        investigating must be hard-stopped — the budget must not creep 30->31->32..."""
+        inv = make_inv(budget=1)
+        llm = FakeLLM([
+            FakeMsg(tool_calls=[FakeToolCall(1, "list_contributors",
+                                             {"reasoning": "start", "owner": "acme", "repo": "widget"})]),
+            # non-compliant: spends the wrap-up call trying to investigate again
+            FakeMsg(tool_calls=[FakeToolCall(2, "get_repo",
+                                             {"reasoning": "one more look", "owner": "acme", "repo": "widget"})]),
+        ])
+        run_investigation(inv, llm, FakeGH())
+
+        self.assertEqual(inv.status, STATUS_NO_VERDICT)
+        self.assertEqual(len(inv.state["budget"]["extensions"]), 1)  # exactly one wrap-up, never more
+        self.assertEqual(inv.budget_used(), 2)
+        self.assertEqual(inv.budget_remaining(), 0)
+        # the wrap-up call mounted only render_verdict, forced
+        self.assertEqual([t["function"]["name"] for t in llm.last_tools], ["render_verdict"])
+        self.assertEqual(llm.last_tool_choice["function"]["name"], "render_verdict")
+        self.assertIn("none rendered", (inv.dir / "report.md").read_text())
 
     def test_resume_repairs_interrupted_history(self):
         inv = make_inv(budget=3)

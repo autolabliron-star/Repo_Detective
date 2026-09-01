@@ -30,7 +30,7 @@ from .investigation import (
 from .llm import BudgetExhausted, LLMClient
 from .prompts import build_initial_user, build_system_prompt
 from .report import write_report
-from .tools.registry import IMPLEMENTATIONS, TOOL_SPECS, dispatch
+from .tools.registry import IMPLEMENTATIONS, TOOL_SPECS, VERDICT_ONLY_SPECS, dispatch
 from .validator import check_evidence
 
 
@@ -131,11 +131,15 @@ def _handle_pause(inv: Investigation, pitch: dict | None, phase: str) -> bool:
     if granted > 0:
         inv.add_extension(requested, granted, (pitch or {}).get("argument", "budget exhausted mid-investigation"),
                           decided_by="human")
+        inv.state["wrapup_granted"] = False  # a real grant resets the one-shot wrap-up
         print(term.green(f"✔ Granted +{granted} calls (budget now {inv.budget_granted()})."))
     else:
-        # 1 wrap-up call, earmarked for render_verdict — a denial must not strand the case without a verdict.
+        # 1 wrap-up call, earmarked for render_verdict — a denial must not strand the case without a
+        # verdict. Granted AT MOST ONCE, and the wrap-up call only mounts the render_verdict tool, so
+        # the budget cannot creep past the denial (a bare instruction doesn't bind the model).
         inv.add_extension(requested, 1, "denied — 1 wrap-up call granted for render_verdict only",
                           decided_by="human (denied)" if sys.stdin.isatty() else "auto (non-interactive)")
+        inv.state["wrapup_granted"] = True
         print(term.yellow("✘ Denied — the agent gets exactly 1 wrap-up call to render its best-effort verdict."))
     inv.state["pending_pitch"] = None
     inv.set_status(STATUS_IN_PROGRESS)
@@ -189,6 +193,7 @@ def _handle_verdict(inv: Investigation, call_id: str, args: dict, phase: str) ->
         "validation_passed": not errors,
         "validation_errors": errors,
     }
+    inv.state["wrapup_granted"] = False  # the wrap-up (if any) served its purpose
     recorded = inv.add_verdict(verdict, trigger=phase)
     inv.add_log(phase=phase, tool="render_verdict", args={"decision": verdict["decision"]},
                 reasoning=args.get("reasoning", ""),
@@ -225,9 +230,22 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
                                  "render_verdict now, or request_more_budget with your pitch."})
             inv.save()
 
+        # Wrap-up mode: after a denial, the single remaining call mounts ONLY render_verdict (forced) —
+        # the agent physically cannot spend it investigating.
+        wrapup = bool(inv.state.get("wrapup_granted")) and inv.budget_remaining() <= 1
+        tools = VERDICT_ONLY_SPECS if wrapup else TOOL_SPECS
+        tool_choice = {"type": "function", "function": {"name": "render_verdict"}} if wrapup else None
+
         try:
-            msg = llm.complete(inv.messages, tools=TOOL_SPECS, budget=inv)
+            msg = llm.complete(inv.messages, tools=tools, budget=inv, tool_choice=tool_choice)
         except BudgetExhausted:
+            if inv.state.get("wrapup_granted"):
+                # The one-shot wrap-up was already spent without a verdict — hard stop, never creep.
+                inv.set_status(STATUS_NO_VERDICT)
+                write_report(inv)
+                print(term.red("Budget spent and the wrap-up call produced no verdict — hard stop. "
+                               f"The material gathered is in the report: {inv.dir / 'report.md'}"))
+                return
             if _handle_pause(inv, None, phase):
                 continue
             inv.messages.append({"role": "user", "content":
@@ -238,6 +256,13 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
 
         inv.messages.append(_serialize_assistant(msg))
         inv.save()
+
+        if wrapup and not any(tc.function.name == "render_verdict" for tc in (msg.tool_calls or [])):
+            inv.set_status(STATUS_NO_VERDICT)
+            write_report(inv)
+            print(term.red("The wrap-up call did not render a verdict — hard stop, no further calls. "
+                           f"Report: {inv.dir / 'report.md'}"))
+            return
 
         if not msg.tool_calls:
             no_tool_strikes += 1
