@@ -33,8 +33,20 @@ docker compose run --rm detective list
 Works with **any OpenAI-compatible provider**: set `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and
 `OPENAI_MODEL` in `.env` — no vendor or model is hardcoded. The client adapts at runtime to what
 the provider accepts (temperature, `max_tokens` vs `max_completion_tokens`, forced tool choice,
-`reasoning_effort`), so switching models is configuration, not code. No other keys or accounts are
-needed.
+`reasoning_effort`), so switching providers is configuration, not code. No other keys or accounts
+are needed.
+
+| Provider | `OPENAI_BASE_URL` | `OPENAI_MODEL` |
+|---|---|---|
+| OpenAI | `https://api.openai.com/v1` | any model with tool calling |
+| Anthropic | `https://api.anthropic.com/v1` | any Claude model id, e.g. `claude-sonnet-5` |
+| Azure OpenAI | `https://<resource>.openai.azure.com/openai/v1` | your deployment name |
+| Local (Ollama, vLLM, LM Studio) | `http://host.docker.internal:<port>/v1` | the model you serve; the key can be any non-empty string |
+
+The agent needs a model that supports function calling; that is the only requirement. Every
+provider-specific parameter difference is learned from the endpoint's first error and adapted,
+not hardcoded. The stored example runs were produced through an OpenAI-compatible gateway serving
+a GPT-5 family model.
 
 ### Running without Docker
 
