@@ -3,8 +3,9 @@
 Every request in the project goes through GitHubClient.get():
 
 - Freshness cache + ETag revalidation: responses are cached on disk. Within
-  DETECTIVE_CACHE_TTL (default 15 min) a cached response is served with ZERO
-  HTTP requests — repeat runs on the same repos cost no quota at all. After
+  DETECTIVE_CACHE_TTL (default 60 min — the anonymous quota window) a cached
+  response is served with ZERO HTTP requests, so re-running or re-tasking the
+  same repos inside a grading session costs no quota at all. After
   the TTL, an If-None-Match revalidation keeps the cache correct. (Measured
   in practice: GitHub counts 304s against the anonymous quota, so freshness
   short-circuiting, not the ETag, is what protects the 60/h limit.)
@@ -44,7 +45,7 @@ class GitHubClient:
         self.quota_remaining: int | None = None
         self.quota_reset: str | None = None
         self._simulate_limit = int(os.environ.get("DETECTIVE_SIMULATE_RATELIMIT", "0") or 0)
-        self._cache_ttl = int(os.environ.get("DETECTIVE_CACHE_TTL", "900") or 0)
+        self._cache_ttl = int(os.environ.get("DETECTIVE_CACHE_TTL", "3600") or 0)
 
     # ------------------------------------------------------------------ #
 

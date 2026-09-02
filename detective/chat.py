@@ -23,6 +23,9 @@ from .validator import invalid_citations
 
 _OBS_CAP = 600  # chars of each observation included in Q&A context
 
+# The web UI reuses exactly these (same grounding rules, same citation validation):
+__all__ = ["run_chat", "classify", "answer_question", "retask", "retask_directive"]
+
 
 def _build_material(inv: Investigation) -> str:
     parts = ["--- INTAKE ---"]
@@ -72,17 +75,20 @@ def _answer_question(inv: Investigation, llm: LLMClient, question: str) -> str:
     return answer
 
 
-def _retask(inv: Investigation, llm: LLMClient, gh, directive: str) -> None:
+def retask_directive(directive: str) -> str:
+    return (f"[re-task from the tech lead] {directive}\n"
+            "Continue the investigation. If the new evidence warrants it, update the verdict with "
+            "render_verdict (fill changed_from_previous); otherwise render it again unchanged, "
+            "stating why the evidence didn't move it.")
+
+
+def _retask(inv: Investigation, llm: LLMClient, gh, directive: str, decide=None) -> None:
     remaining = inv.budget_remaining()
     print(term.dim(f"Resuming the investigation ({remaining} LLM calls remaining)…"))
-    inv.messages.append({"role": "user", "content":
-                         f"[re-task from the tech lead] {directive}\n"
-                         "Continue the investigation. If the new evidence warrants it, update the verdict with "
-                         "render_verdict (fill changed_from_previous); otherwise render it again unchanged, "
-                         "stating why the evidence didn't move it."})
+    inv.messages.append({"role": "user", "content": retask_directive(directive)})
     inv.save()
     before = len(inv.state["verdicts"])
-    run_investigation(inv, llm, gh, phase=f"retask: {directive[:80]}")
+    run_investigation(inv, llm, gh, phase=f"retask: {directive[:80]}", decide=decide)
     after = inv.latest_verdict()
     if after and len(inv.state["verdicts"]) > before and before > 0:
         prev = inv.state["verdicts"][before - 1]
@@ -140,3 +146,9 @@ def run_chat(inv: Investigation, llm: LLMClient, gh) -> None:
             _retask(inv, llm, gh, text)
         else:
             print(f"\n{_answer_question(inv, llm, text)}\n")
+
+
+# Public aliases for the web UI — one implementation of the grounded Q&A and re-task paths.
+classify = _classify
+answer_question = _answer_question
+retask = _retask

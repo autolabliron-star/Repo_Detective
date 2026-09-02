@@ -20,7 +20,8 @@ import re
 MIN_QUOTE_CHARS = 10
 MIN_FRAGMENT_CHARS = 5
 
-_CITATION_RE = re.compile(r"\[step\s+(\d+)\]", re.IGNORECASE)
+# "[step 7]" and the plural the model likes to write, "[steps 2, 3]"
+_CITATION_RE = re.compile(r"\[steps?\s+(\d+(?:\s*,\s*\d+)*)\]", re.IGNORECASE)
 # "...", "…", "[...]" or "(...)" inside a quote marks skipped text.
 _ELLIPSIS_RE = re.compile(r"\s*(?:[\[(]\s*(?:\.{3,}|…)\s*[\])]|\.{3,}|…)\s*")
 
@@ -90,4 +91,5 @@ def check_evidence(evidence: list[dict] | None, log: list[dict]) -> tuple[list[s
 def invalid_citations(text: str, log: list[dict]) -> list[int]:
     """For chat answers: [step N] citations that don't exist in the log."""
     ids = {entry["id"] for entry in log}
-    return sorted({int(m) for m in _CITATION_RE.findall(text or "")} - ids)
+    cited = {int(n) for group in _CITATION_RE.findall(text or "") for n in re.split(r"\s*,\s*", group)}
+    return sorted(cited - ids)

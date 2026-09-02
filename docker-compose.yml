@@ -1,8 +1,13 @@
 services:
   detective:
     build: .
-    # `docker compose run --rm detective investigate <url>` — run allocates a TTY,
-    # which the human-in-the-loop budget approval needs. Plain `up` prints usage.
+    # `docker compose up` serves the web UI at http://localhost:8000 (case files, live logs,
+    # budget approvals, chat). The CLI is one command away and shares the same case files:
+    #   docker compose run --rm detective investigate https://github.com/expressjs/express
+    #   docker compose run --rm detective chat expressjs/express
+    # (run allocates a TTY, which the terminal budget prompt needs.)
+    ports:
+      - "${DETECTIVE_PORT:-8000}:8000"
     stdin_open: true
     tty: true
     environment:

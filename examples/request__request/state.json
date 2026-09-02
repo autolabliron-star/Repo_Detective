@@ -1,0 +1,1551 @@
+{
+ "schema_version": 1,
+ "repo": {
+  "input_url": "request/request",
+  "canonical_full_name": "request/request",
+  "renamed_from": null,
+  "investigated_at": "2026-09-02T07:55:59+00:00"
+ },
+ "intake": {
+  "input_url": "request/request",
+  "canonical_full_name": "request/request",
+  "renamed_from": null,
+  "owner": "request",
+  "repo": "request",
+  "description": "🏊🏾 Simplified HTTP request client.",
+  "stars": 25511,
+  "forks": 3142,
+  "open_issues_and_prs": 143,
+  "language": "JavaScript",
+  "license": "Apache-2.0",
+  "created_at": "2011-01-23T01:25:14Z",
+  "pushed_at": "2024-08-14T00:09:41Z",
+  "default_branch": "master",
+  "archived": false,
+  "disabled": false,
+  "is_fork": false,
+  "fork_parent": null,
+  "size_kb": 2290,
+  "last_release": null,
+  "release_note": "no GitHub releases, but tags exist (latest tag: v2.88.1)",
+  "top_contributors": [
+   {
+    "login": "mikeal",
+    "commits": 623,
+    "share_pct": 35.2
+   },
+   {
+    "login": "simov",
+    "commits": 475,
+    "share_pct": 26.9
+   },
+   {
+    "login": "nylen",
+    "commits": 300,
+    "share_pct": 17.0
+   },
+   {
+    "login": "greenkeeperio-bot",
+    "commits": 49,
+    "share_pct": 2.8
+   },
+   {
+    "login": "seanstrom",
+    "commits": 46,
+    "share_pct": 2.6
+   },
+   {
+    "login": "FredKSchott",
+    "commits": 38,
+    "share_pct": 2.1
+   },
+   {
+    "login": "isaacs",
+    "commits": 32,
+    "share_pct": 1.8
+   },
+   {
+    "login": "eiriksm",
+    "commits": 21,
+    "share_pct": 1.2
+   },
+   {
+    "login": "lalitkapoor",
+    "commits": 15,
+    "share_pct": 0.8
+   },
+   {
+    "login": "mscdex",
+    "commits": 15,
+    "share_pct": 0.8
+   }
+  ],
+  "contributors_note": "shares computed over the top 30 contributors' commit total",
+  "warnings": [],
+  "fetched_at": "2026-09-02T07:55:59+00:00"
+ },
+ "budget": {
+  "initial": 30,
+  "used": 9,
+  "extensions": []
+ },
+ "log": [
+  {
+   "id": 1,
+   "ts": "2026-09-02T07:56:07+00:00",
+   "call": 1,
+   "phase": "initial",
+   "tool": "get_repo",
+   "args": {
+    "owner": "request",
+    "repo": "request"
+   },
+   "reasoning": "The intake shows an old, popular package with a 2024 push but no GitHub release. Establish the repository’s own status and any deprecation signal before treating activity as maintenance.",
+   "observation": "request/request — 🏊🏾 Simplified HTTP request client.\nstars 25,511, forks 3,142, open issues+PRs 143\ncreated 2011-01-23, last push 2024-08-14, default branch master\nlicense: Apache-2.0, language: JavaScript, size 2,290 KB\narchived: False, disabled: False, fork: False",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 29
+  },
+  {
+   "id": 2,
+   "ts": "2026-09-02T07:56:07+00:00",
+   "call": 1,
+   "phase": "initial",
+   "tool": "get_file",
+   "args": {
+    "owner": "request",
+    "repo": "request",
+    "path": "README.md"
+   },
+   "reasoning": "A package this old may announce retirement in its README. Read the maintainer’s notice rather than infer intent from timestamps.",
+   "observation": "README.md @ default branch (46,374 chars):\n# Deprecated!\n\nAs of Feb 11th 2020, request is fully deprecated. No new changes are expected to land. In fact, none have landed for some time.\n\nFor more information about why request is deprecated and possible alternatives refer to\n[this issue](https://github.com/request/request/issues/3142).\n\n# Request - Simplified HTTP client\n\n[![npm package](https://nodei.co/npm/request.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/request/)\n\n[![Build status](https://img.shields.io/travis/request/request/master.svg?style=flat-square)](https://travis-ci.org/request/request)\n[![Coverage](https://img.shields.io/codecov/c/github/request/request.svg?style=flat-square)](https://codecov.io/github/request/request?branch=master)\n[![Coverage](https://img.shields.io/coveralls/request/request.svg?style=flat-square)](https://coveralls.io/r/request/request)\n[![Dependency Status](https://img.shields.io/david/request/request.svg?style=flat-square)](https://david-dm.org/request/request)\n[![Known Vulnerabilities](https://snyk.io/test/npm/request/badge.svg?style=flat-square)](https://snyk.io/test/npm/request)\n[![Gitter](https://img.shields.io/badge/gitter-join_chat-blue.svg?style=flat-square)](https://gitter.im/request/request?utm_source=badge)\n\n\n## Super simple to use\n\nRequest is designed to be the simplest way possible to make http calls. It supports HTTPS and follows redirects by default.\n\n```js\nconst request = require('request');\nrequest('http://www.google.com', function (error, response, body) {\n  console.error('error:', error); // Print the error if one occurred\n  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received\n  console.log('body:', body); // Print the HTML for the Google homepage.\n});\n```\n\n\n## Table of contents\n\n- [Streaming](#streaming)\n- [Promises & Async/Await](#promises--asyncawait)\n- [Forms](#forms)\n- [HTTP Authentication](#http-authentication)\n- [Custom HTTP Headers](#custom-http-headers)\n- [OAuth Signing](#oauth-signing)\n- [Proxies](#proxies)\n- [Unix Domain Sockets](#unix-domain-sockets)\n- [TLS/SSL Protocol](#tlsssl-protocol)\n- [Support for HAR 1.2](#support-for-har-12)\n- [**All Available Options**](#requestoptions-callback)\n\nRequest also offers [convenience methods](#convenience-methods) like\n`request.defaults` and `request.post`, and there are\nlots of [usage examples](#examples) and several\n[debugging techniques](#debugging).\n\n\n---\n\n\n## Streaming\n\nYou can stream any response to a file stream.\n\n```js\nrequest('http://google.com/doodle.png').pipe(fs.createWriteStream('doodle.png'))\n```\n\nYou can also stream a file to a PUT or POST request. This method will also check the file extension against a mapping of file extensions to content-types (in this case `application/json`) and use the proper `content-type` in the PUT request (if the headers don’t already provide one).\n\n```js\nfs.createReadStream('file.json').pipe(request.put('http://mysite.com/obj.json'))\n```\n\nRequest can also `pipe` to itself. When doing so, `content-type` and `content-length` are preserved in the PUT headers.\n\n```js\nrequest.get('http://google.com/img.png').pipe(request.put('http://mysite.com/img.png'))\n```\n\nRequest emits a \"response\" event when a response is received. The `response` argument will be an instance of [http.IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage).\n\n```js\nrequest\n  .get('http://google.com/img.png')\n  .on('response', function(response) {\n    console.log(response.statusCode) // 200\n    console.log(response.headers['content-type']) // 'image/png'\n  })\n  .pipe(request.put('http://mysite.com/img.png'))\n```\n\nTo easily handle errors when streaming requests, listen to the `error` event before piping:\n\n```js\nrequest\n  .get('http://mysite.com/doodle.png')\n  .on('error', function(err) {\n    console.error(err)\n  })\n  .pipe(fs.createWriteStream('doodle.png'))\n```\n\nNow let’s get fancy.\n\n```js\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    if (req.method === 'PUT') {\n      req.pipe(request.put('http://mysite.com/doodle.png'))\n    } else if (req.method === 'GET' || req.method === 'HEAD') {\n      request.get('http://mysite.com/doodle.png').pipe(resp)\n    }\n  }\n})\n```\n\nYou can also `pipe()` from `http.ServerRequest` instances, as well as to `http.ServerResponse` instances. The HTTP method, headers, and entity-body data will be sent. Which means that, if you don't really care about security, you can do:\n\n```js\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    const x = request('http://mysite.com/doodle.png')\n    req.pipe(x)\n    x.pipe(resp)\n  }\n})\n```\n\nAnd since `pipe()` returns the destination stream in ≥ Node 0.5.x you can do one line proxying. :)\n\n```js\nreq.pipe(request('http://mysite.com/doodle.png')).pipe(resp)\n```\n\nAlso, none of this new functionality conflicts with requests previous features, it just expands them.\n\n```js\nconst r = request.defaults({'proxy':'http://localproxy.com'})\n\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    r.get('http://google.com/doodle.png').pipe(resp)\n  }\n})\n```\n\nYou can still use intermediate proxies, the requests will still follow HTTP forwards, etc.\n\n[back to top](#table-of-contents)\n\n\n---\n\n\n## Promises & Async/Await\n\n`request` supports both streaming and callback interfaces natively. If you'd like `request` to return a Promise instead, you can use an alternative interface wrapper for `request`. These wrappers can be useful if you prefer to work with Promises, or if you'd like to use `async`/`await` in ES2017.\n\nSeveral alternative interfaces are provided by the request team, including:\n- [`request-promise`](https://github.com/request/request-promise) (uses [Bluebird](https://github.com/petkaantonov/bluebird) Promises)\n- [`request-promise-native`](https://github.com/request/request-promise-native) (uses native Promises)\n- [`request-promise-any`](https://github.com/request/request\n...[truncated — 40,374 more chars]",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 29
+  },
+  {
+   "id": 3,
+   "ts": "2026-09-02T07:56:07+00:00",
+   "call": 1,
+   "phase": "initial",
+   "tool": "get_file",
+   "args": {
+    "owner": "request",
+    "repo": "request",
+    "path": "package.json"
+   },
+   "reasoning": "The intake identifies JavaScript but not the published identity or current version. The manifest anchors the OSV query to the actual package.",
+   "observation": "package.json @ default branch (1,938 chars):\n{\n \"name\": \"request\",\n \"description\": \"Simplified HTTP request client.\",\n \"keywords\": [\n  \"http\",\n  \"simple\",\n  \"util\",\n  \"utility\"\n ],\n \"version\": \"2.88.1\",\n \"author\": \"Mikeal Rogers <mikeal.rogers@gmail.com>\",\n \"repository\": {\n  \"type\": \"git\",\n  \"url\": \"https://github.com/request/request.git\"\n },\n \"bugs\": {\n  \"url\": \"http://github.com/request/request/issues\"\n },\n \"license\": \"Apache-2.0\",\n \"engines\": {\n  \"node\": \">= 6\"\n },\n \"main\": \"index.js\",\n \"files\": [\n  \"lib/\",\n  \"index.js\",\n  \"request.js\"\n ],\n \"dependencies\": {\n  \"aws-sign2\": \"~0.7.0\",\n  \"aws4\": \"^1.8.0\",\n  \"caseless\": \"~0.12.0\",\n  \"combined-stream\": \"~1.0.6\",\n  \"extend\": \"~3.0.2\",\n  \"forever-agent\": \"~0.6.1\",\n  \"form-data\": \"~2.3.2\",\n  \"har-validator\": \"~5.1.3\",\n  \"http-signature\": \"~1.2.0\",\n  \"is-typedarray\": \"~1.0.0\",\n  \"isstream\": \"~0.1.2\",\n  \"json-stringify-safe\": \"~5.0.1\",\n  \"mime-types\": \"~2.1.19\",\n  \"oauth-sign\": \"~0.9.0\",\n  \"performance-now\": \"^2.1.0\",\n  \"qs\": \"~6.5.2\",\n  \"safe-buffer\": \"^5.1.2\",\n  \"tough-cookie\": \"~2.5.0\",\n  \"tunnel-agent\": \"^0.6.0\",\n  \"uuid\": \"^3.3.2\"\n },\n \"scripts\": {\n  \"test\": \"npm run lint && npm run test-ci && npm run test-browser\",\n  \"test-ci\": \"taper tests/test-*.js\",\n  \"test-cov\": \"nyc --reporter=lcov tape tests/test-*.js\",\n  \"test-browser\": \"node tests/browser/start.js\",\n  \"lint\": \"standard\"\n },\n \"devDependencies\": {\n  \"bluebird\": \"^3.2.1\",\n  \"browserify\": \"^13.0.1\",\n  \"browserify-istanbul\": \"^2.0.0\",\n  \"buffer-equal\": \"^1.0.0\",\n  \"codecov\": \"^3.0.4\",\n  \"coveralls\": \"^3.0.2\",\n  \"function-bind\": \"^1.0.2\",\n  \"karma\": \"^3.0.0\",\n  \"karma-browserify\": \"^5.0.1\",\n  \"karma-cli\": \"^1.0.0\",\n  \"karma-coverage\": \"^1.0.0\",\n  \"karma-phantomjs-launcher\": \"^1.0.0\",\n  \"karma-tap\": \"^3.0.1\",\n  \"nyc\": \"^14.1.1\",\n  \"phantomjs-prebuilt\": \"^2.1.3\",\n  \"rimraf\": \"^2.2.8\",\n  \"server-destroy\": \"^1.0.1\",\n  \"standard\": \"^9.0.0\",\n  \"tape\": \"^4.6.0\",\n  \"taper\": \"^0.5.0\"\n },\n \"greenkeeper\": {\n  \"ignore\": [\n   \"hawk\",\n   \"har-validator\"\n  ]\n }\n}",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 29
+  },
+  {
+   "id": 4,
+   "ts": "2026-09-02T07:56:08+00:00",
+   "call": 1,
+   "phase": "initial",
+   "tool": "osv_query",
+   "args": {
+    "package": "request",
+    "ecosystem": "npm"
+   },
+   "reasoning": "This is a widely consumed npm package; query the vulnerability record directly, with special attention to malicious-code classifications.",
+   "observation": "OSV: 2 known vulnerabilities for npm package 'request':\n- GHSA-7xfp-9c55-5vqj (CVE-2017-16026) [CVSS3 CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N] published 2018-11-09\n  Remote Memory Exposure in request\n  introduced 2.49.0, fixed 2.68.0; introduced 2.2.6, fixed 2.68.0\n- GHSA-p8p7-x288-28g6 (CVE-2023-28155) [CVSS3 CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N] published 2023-03-16\n  Server-Side Request Forgery in Request\n  introduced 0, no fix listed; introduced 0, fixed 3.0.0",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 29
+  },
+  {
+   "id": 5,
+   "ts": "2026-09-02T07:56:08+00:00",
+   "call": 1,
+   "phase": "initial",
+   "tool": "get_security_advisories",
+   "args": {
+    "owner": "request",
+    "repo": "request"
+   },
+   "reasoning": "Repository advisories can reveal maintainer-recognized incidents that a package-only query may not contextualize.",
+   "observation": "no repository-published security advisories. NOTE: maintainers often never publish repo-level advisories even when CVEs exist — cross-check with osv_query using the package name from the manifest (e.g. package.json).",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 29
+  },
+  {
+   "id": 6,
+   "ts": "2026-09-02T07:56:08+00:00",
+   "call": 1,
+   "phase": "initial",
+   "tool": "list_commits",
+   "args": {
+    "owner": "request",
+    "repo": "request",
+    "per_page": 30
+   },
+   "reasoning": "The 2024 push could be a substantive maintenance event or mere metadata. Inspect the recent commit timeline and authorship.",
+   "observation": "30 commits (no filters, newest first):\n- 3c0cddc7c8 [2020-02-11] gr2m: README: typo in deprecation message (#3268)\n- aded7e4f8e [2020-02-11] mikeal: doc: note full deprecation (#3267)\n- 212570b697 [2019-05-29] andresroberto: Use nyc instead of istanbul (#3169)\n- b3a218dc7b [2019-04-04] odykyi: Update README.md (#3023)\n- b0e9abb2f2 [2019-04-01] shige: docs: :memo: Updated the Change Log for v2.88.0 (2018/08/10) (#3008)\n- 7195b5064a [2019-02-26] jaredsuttles: docs: adjust readme timeout argument description to be clearer (#3115)\n- a9557c9e7d [2019-02-15] flotwig: Update outdated link in comment (#3109)\n- df346d8531 [2018-12-24] reconbot: fix: Clear timeout on `#abort()` (#3090)\n- 670b563067 [2018-12-23] grabus: chore: Update to tough-cookie 2.5.0 (#3089)\n- be7882b0bb [2018-12-13] rickyes: optimize:do unnecessary processing when changing options to null (#2972)\n- e81c9b1dad [2018-12-12] Alvin Smith: fix: expression minor bugs (#3074)\n- b3926a3a57 [2018-12-01] reconbot: Revert \"Workaround for GitHub issue #2807 (#2808)\" (#3075)\n- 2bc3cc4c99 [2018-12-01] pgonzal: Workaround for GitHub issue #2807 (#2808)\n- 167065e235 [2018-11-24] reconbot: chore: ensure piped body is exactly the same (#3064)\n- 81b171b5f7 [2018-11-24] EmmanuelDemey: fix: use const instead of var in the README (#3046)\n- 5ee89063cd [2018-11-23] lifeisfoo: Documented response.caseless.get() (#2995)\n- 39e3d50709 [2018-11-23] reconbot: add bug label to stale.yml\n- 2737161f36 [2018-11-23] RolfKoenders: Verify that body is not empty (#2701)\n- 297e39b158 [2018-11-23] odedpeer: Update the documentation of timeout to reflect it controls timeout of socket inactivity (#2728)\n- 641527de7a [2018-11-23] Huachao: Update cookie store API link (#2750)\n- 8d18919753 [2018-11-23] riverspirit: Update README to mention util.promisify() (#2824)\n- 2031447261 [2018-11-23] Maciek416: Fix link to HAR 1.2 Section Anchor (#2674)\n- e476ce5762 [2018-11-23] deed02392: Update README.md (#2644)\n- 418623cf6d [2018-08-15] jmannanc: Drop support for Node.js v4 (Fix #2917)\n- 1befd90b4b [2018-11-22] reconbot: fix: SSL Certs (#3062)\n- 26d6cceca1 [2018-11-22] reconbot: Merge pull request #3061 from request/reconbot/neverstale\n- 48bdabd9de [2018-11-22] reconbot: Add neverstale label to stalebot config\n- cdca238d7f [2018-11-22] reconbot: Merge pull request #3060 from request/reconbot/stale-issues\n- 7c42a7f880 [2018-11-22] reconbot: chore: Add probot-stale\n- bf3e2651a0 [2018-11-21] chancehudson: fix #3054, Bump har-validator version to 5.1.3 (#3055)\n(showing the 30 most recent — there may be more; narrow with since/until/author)",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 29
+  },
+  {
+   "id": 7,
+   "ts": "2026-09-02T07:56:09+00:00",
+   "call": 1,
+   "phase": "initial",
+   "tool": "list_issues",
+   "args": {
+    "owner": "request",
+    "repo": "request",
+    "state": "open",
+    "sort": "updated",
+    "per_page": 20
+   },
+   "reasoning": "Open issue volume alone is noise; recent updated issues and replies show whether anyone is still tending the project.",
+   "observation": "20 open issues, sorted by updated (2 PRs excluded from the issues feed):\n- #3752 [open] (5 comments, opened 2025-09-12) Announcing dropin-request: A Drop-In Replacement for request\n- #3143 [open] (106 comments, opened 2019-04-01) Alternative libraries to request\n- #3480 [open] (2 comments, opened 2023-12-29) Docs on migrating from request to fetch?\n- #3759 [open] (0 comments, opened 2026-04-13) naraa\n- #3758 [open] (0 comments, opened 2026-03-11) Access to raise new issue for (Allegis Use Only) Contractor Onboarding/Extension Request.\n- #3442 [open] (8 comments, opened 2023-03-08) CVE-2023-28155 Request allows a bypass of SSRF mitigations via an attacker-controller serv\n- #3751 [open] (2 comments, opened 2025-08-15) form-data CVE-2025-7783\n- #3756 [open] (0 comments, opened 2025-12-08) call time\n- #3755 [open] (1 comments, opened 2025-11-10) CVE-2023-26136 reported for dependency module tough-cookie\n- #3754 [open] (0 comments, opened 2025-10-09) Request GitHub KYC\n- #3753 [open] (0 comments, opened 2025-09-20) Raraaahh\n- #3748 [open] (0 comments, opened 2025-06-16) Unhandled error when attempting to convert a very long string to a different format\n- #3147 [open] (33 comments, opened 2019-04-03) Post Request ok with postman but failed using code in python\n- #3620 [open] (1 comments, opened 2025-03-10) request/request-promise Got Hit By Spam Comments As Well\n- #3142 [open] (437 comments, opened 2019-03-30) Request’s Past, Present and Future\n- #3507 [open] (0 comments, opened 2025-01-28) Fodboldbane\n- #2366 [open] (18 comments, opened 2016-09-05) TypeError: source.on is not a function\n- #3505 [open] (0 comments, opened 2024-12-19) Error: write EPROTO 22360:error:1408F10B:SSL routines:ssl3_get_record:wrong version ,will \n- #3503 [open] (1 comments, opened 2024-12-09) 3142\n- #3500 [open] (0 comments, opened 2024-09-21) Unable to init from given binary data.\nsummary: 9 of 20 listed issues have 0 comments and no assignee; oldest such issue: #3500 from 2024-09-21",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 29
+  },
+  {
+   "id": 8,
+   "ts": "2026-09-02T07:56:09+00:00",
+   "call": 1,
+   "phase": "initial",
+   "tool": "list_pulls",
+   "args": {
+    "owner": "request",
+    "repo": "request",
+    "state": "all",
+    "per_page": 20
+   },
+   "reasoning": "Merged PR recency is the clearest test of active stewardship, especially where commits may be automated.",
+   "observation": "20 all PRs (most recently updated first):\n- #3757 [closed] Revise security policy and vulnerability reporting (by Loulou823)\n- #3268 [merged 2020-02-11] README: typo in deprecation message (by gr2m)\n- #3749 [closed] feat: add support for SOCKS proxy (by appurva21)\n- #3508 [closed] Added SASVA suggested fixes for CVE-2023-28155 (by damithn)\n- #3491 [closed] Http signature (by sreenijakurremula)\n- #3506 [closed] Create SECURITY.md (by kingson8210)\n- #3504 [closed] feat: 更新依赖库版本 (by livehigh)\n- #3501 [closed] Get types in house (by CubikNeRubik)\n- #3461 [open] Update package.json (by ksreejithnair)\n- #3498 [closed] Node 20 upgrade (by jennifer-shehane)\n- #3474 [closed] log buffers over limit (by BrendanMeintjes)\n- #3494 [closed] Protocol version auto unhandled error (by parthverma1)\n- #3492 [closed] Prevent \"ERR_HTTP2_SOCKET_UNBOUND\" from bubbling up (by parthverma1)\n- #2648 [closed] Use Doctoc to maintain README \"Table of contents\"! (by PeterDaveHello)\n- #3395 [open] Update http-signature to major version 1.3 (by mylesgordon)\n- #3331 [closed] Include Permanent Redirect (by cwrlys)\n- #3449 [open] Chore/testing GitHub workflow (by dev-sharma-08)\n- #3473 [closed] log buffers over limit (by BrendanMeintjes)\n- #3472 [closed] build: bump tough-cookie dependency (by leroyguillaume)\n- #3425 [open] -- upgrade dependencies (by pavhov)\nsummary: 1 of 20 listed PRs were merged; most recent merge 2020-02-11",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 29
+  },
+  {
+   "id": 9,
+   "ts": "2026-09-02T07:56:15+00:00",
+   "call": 2,
+   "phase": "initial",
+   "tool": "render_verdict",
+   "args": {
+    "decision": "reject"
+   },
+   "reasoning": "The repository’s own README declares retirement, OSV records an unfixed SSRF vulnerability, and no PR has merged since the retirement notice. This is abandonment with a known unresolved security defect, not ordinary dependency hygiene.",
+   "observation": "SENIOR REVIEW: verdict (reject) handed back for a second look after 2 call(s) — anomalies must be pursued or explicitly closed before concluding",
+   "api_requests": 0,
+   "error": null,
+   "budget_after": 28
+  },
+  {
+   "id": 10,
+   "ts": "2026-09-02T07:56:23+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "get_issue",
+   "args": {
+    "owner": "request",
+    "repo": "request",
+    "number": 3442
+   },
+   "reasoning": "OSV identifies an unfixed SSRF and the issue list shows a dedicated report. Read the report and discussion to establish whether maintainers addressed it or left it unresolved.",
+   "observation": "issue #3442: CVE-2023-28155 Request allows a bypass of SSRF mitigations via an attacker-controller server that does a cross-protocol redirect\nstate: open, opened 2023-03-08 by SzymonDrosdzol, 8 comments, labels: none\nbody: ### Summary\r\nI am a security researcher at [Doyensec](https://doyensec.com/).\r\n\r\nDuring a security engagement I have identified a security vulnerability in the Request library.\r\nIn a spirit of a Responsible Disclosure we have tried to contact the maintainer directly on 12/02/2022 and 01/18/2023 via [email](mikeal.rogers@gmail.com), but we have received no answer.\r\n\r\nPlease provide a communication channel that would allow us to share the technical details and the proposed fix, otherwise we will be forced to disclose the vulnerability publicly.\r\n\r\nYou can contact me via email: szymon@doyensec.com\r\n\n--- comment by ReduxMPX [2023-03-10]: Not my conversation to be involving myself in, but why would you be forced to disclose the vulnerability publicly if they don't respond?\n--- comment by ikkisoft [2023-03-13]: Please refer to https://googleprojectzero.blogspot.com/p/vulnerability-disclosure-faq.html \"Why are disclosure deadlines necessary?\" if you're not familiar with standard vulnerability disclosure practices\n--- comment by SzymonDrosdzol [2023-03-16]: # Summary\r\n\r\nA Server Side Request Forgery (SSRF) attack describes the ability of an attacker to create network connections from a vulnerable web application to the internal network and other Internet hosts. Frequently, a SSRF vulnerability is used to attack internal services placed behind a firewall and not directly accessible from the Internet.\r\n\r\nThe Request library can be leveraged to initiate\n--- comment by rgnova [2023-03-17]: I imagine this is where the problem lies?:\r\nhttps://github.com/request/request/blame/3c0cddc7c8eb60b470e9519da85896ed7ee0081e/lib/redirect.js#L111\r\n\r\nI'm having a hard time deciding if this should be considered a requestjs \"vuln\" or if its more of a \"bug\". It looks like requestjs was always vulnerable to SSRFs, and `ssrf-req-filter` is what fixed the problem. But given how requestjs is written, th\n--- comment by ronjouch [2023-03-21]: Tangential call for help, and question addressed to subscribers of this issue: is it clear to you how to get SSRF protection in recently-introdued-in-node18 `fetch` like we do in axios/request with a plugin like ssrf-req-filter? (Putting this CVE aside, of course).\r\n\r\nIt's not to me. Community implementation `node-fetch` has support for something similar, but I can't find anything in the new imple\n...[3 more comments not shown]",
+   "api_requests": 2,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 11,
+   "ts": "2026-09-02T07:56:24+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "get_issue",
+   "args": {
+    "owner": "request",
+    "repo": "request",
+    "number": 3142
+   },
+   "reasoning": "The README directs users to this retirement discussion. Read the maintainer’s stated outcome and any migration guidance at the source.",
+   "observation": "issue #3142: Request’s Past, Present and Future\nstate: open, opened 2019-03-30 by mikeal, 437 comments, labels: neverstale\nbody: Before I go into the details and reasoning I’ll get straight to the point. **The most valuable thing `request` can do for the JavaScript ecosystem is to go into maintenance mode and stop considering new features or major releases.**\r\n\r\nApologies in advance to the other committers on `request` that have been doing their best to improve it, but it’s for the best.\r\n\r\n## 2009\r\n\r\nThe first version of `request` was one of the first modules ever created for the Node.js ecosystem. The earliest versions were written to APIs that pre-date the standard callback interface, streams, node_modules and npm. For the first few years, `request` and Node.js evolved together, each learning from the other. As Node.js improved and migrated core interfaces so did request. As request adopted changes to the core http library and streams it also informed improvements like the `pipe` event (which enabled `request`’s one line proxy) and one of Core http’s many re-writes (the one I had to write).\r\n\r\n## npm\r\n\r\n`request` was one of the first modules added to the npm registry. As npm grew so did dependence on `request`. Even now, when `npm` is used far more for front-end than back-end work, `request` remains one of the most depended on modules in the registry. As I write this, 41K modules depend on request and it is downloaded 14 million times a week.\r\n\r\nThe place `request` has in the Node.js ecosystem is no longer one of an innovator but of an incumbent. If you Google for how to do something with HTTP in No\n--- comment by reconbot [2019-03-30]: I fully support this, I think a warning message and/or deprecating new releases is in order.\r\n\r\nAs for the change in process and guidelines, it makes my job a lot easier 👌\n--- comment by simov [2019-03-31]: Very well said @mikeal. I'm pinning this issue to gain more visibility.\n--- comment by reconbot [2019-03-31]: Things we might do - please discuss and volunteer!\r\n- [ ] update readme with current state of project\r\n- [ ] update ci publishing pipeline @mikeal \r\n- [ ] provide a doc with some guidance on `request` alternatives https://github.com/request/request/issues/3143\r\n- [ ] add a warning message on install of the package to use another package and reference the doc\r\n- [ ] pick a date to stop support (I v\n--- comment by analog-nico [2019-04-01]: It makes a lot of sense! I will slowly adopt this policy for the `request-promise` family as well. Cheers to your important contributions to the node ecosystem!\n--- comment by bajtos [2019-04-02]: > deprecate the latest npm package and auto deprecate them on publish\r\n\r\nPlease be careful about deprecation. As Mikael wrote above, there are 41K modules depending on `request`. Many of these modules are useful in the current state and work well for their users, but their maintainers may not have time to rework those modules to use something else than `request`. By deprecating `request` at instal\n...[432 more comments not shown]",
+   "api_requests": 2,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 12,
+   "ts": "2026-09-02T07:56:24+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "get_user",
+   "args": {
+    "login": "mikeal"
+   },
+   "reasoning": "Mikeal is named as package author and is among the largest historical contributors. Profile the named maintainer behind the package’s stewardship.",
+   "observation": "mikeal (User) — Mikeal Rogers\naccount created 2008-02-21, 509 public repos, 5,099 followers\nlocation: San Francisco\nbio: Hacker of a certain age.",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 13,
+   "ts": "2026-09-02T07:56:25+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "get_user",
+   "args": {
+    "login": "simov"
+   },
+   "reasoning": "Simov accounts for 26.9% of top-contributor commits, a material concentration. Identify whether this historical maintainer remains a plausible steward.",
+   "observation": "simov (User) — simo\naccount created 2012-04-30, 131 public repos, 496 followers\ncompany: Outofindex\nlocation: EET/EEST\nbio: (λ (λ (λ (λ (λ (⌐■_■))))))",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 14,
+   "ts": "2026-09-02T07:56:25+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "get_user",
+   "args": {
+    "login": "nylen"
+   },
+   "reasoning": "Nylen accounts for 17.0% of top-contributor commits. Profile this third major historical contributor to test whether maintenance was distributed or vanished.",
+   "observation": "nylen (User) — James Nylen\naccount created 2010-03-20, 216 public repos, 230 followers\nlocation: UTC-5 or -6 maybe\nbio: I like to build things.",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 15,
+   "ts": "2026-09-02T07:56:25+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "get_user_events",
+   "args": {
+    "login": "mikeal"
+   },
+   "reasoning": "The repository is deprecated; Mikeal’s current public activity distinguishes a vanished account from an active person who simply no longer maintains this package.",
+   "observation": "no public activity for mikeal in GitHub's recent-events window. NOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline.",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 16,
+   "ts": "2026-09-02T07:56:25+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "get_user_events",
+   "args": {
+    "login": "simov"
+   },
+   "reasoning": "Simov is a major historical contributor. Recent public activity helps determine whether the project lacks a current steward rather than merely lacking commits.",
+   "observation": "no public activity for simov in GitHub's recent-events window. NOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline.",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 17,
+   "ts": "2026-09-02T07:56:26+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "get_user_events",
+   "args": {
+    "login": "nylen"
+   },
+   "reasoning": "Nylen is a major historical contributor. Recent public activity helps determine whether the project lacks a current steward rather than merely lacking commits.",
+   "observation": "no public activity for nylen in GitHub's recent-events window. NOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline.",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 18,
+   "ts": "2026-09-02T07:56:26+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "list_commits",
+   "args": {
+    "owner": "request",
+    "repo": "request",
+    "since": "2019-01-01",
+    "until": "2020-03-01",
+    "author": "mikeal",
+    "per_page": 30
+   },
+   "reasoning": "The deprecation window is decisive. Retrieve Mikeal’s commits around it to identify the named author of the retirement action and its exact scope.",
+   "observation": "1 commits (since=2019-01-01, until=2020-03-01, author=mikeal, newest first):\n- aded7e4f8e [2020-02-11] mikeal: doc: note full deprecation (#3267)",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 19,
+   "ts": "2026-09-02T07:56:27+00:00",
+   "call": 3,
+   "phase": "initial",
+   "tool": "list_forks",
+   "args": {
+    "owner": "request",
+    "repo": "request"
+   },
+   "reasoning": "A deprecated project can still be viable only if its community moved to a maintained fork. Inspect the leading forks and their push dates.",
+   "observation": "top 10 forks by stars (is the community maintaining one of these instead?):\n- postmanlabs/postman-request: 155 stars, last push 2026-07-21\n- linus/request: 77 stars, last push 2011-02-14\n- cypress-io/request: 14 stars, last push 2026-08-26\n- isaacs/request: 8 stars, last push 2014-09-08\n- Flipboard/request: 6 stars, last push 2015-10-06\n- bcherry/request: 3 stars, last push 2020-08-12\n- codemedic213515/request: 3 stars, last push 2019-11-14\n- SoltanHuseynov/request: 2 stars, last push 2021-04-01\n- supasate/request: 2 stars, last push 2017-09-02\n- mcanthony/request: 2 stars, last push 2015-11-03\n(point any tool at a fork via its owner/repo to investigate it)",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 27
+  },
+  {
+   "id": 20,
+   "ts": "2026-09-02T07:56:35+00:00",
+   "call": 4,
+   "phase": "initial",
+   "tool": "render_verdict",
+   "args": {
+    "decision": "reject"
+   },
+   "reasoning": "The initially decisive abandonment finding has now been pursued to its named author, the unresolved security report, and the community-fork question. Mikeal authored the retirement action; the SSRF reporter records unanswered direct disclosure attempts; and the original package remains explicitly retired with no post-2020 merged maintenance.",
+   "observation": "verdict v1 recorded: reject",
+   "api_requests": 0,
+   "error": null,
+   "budget_after": 26
+  },
+  {
+   "id": 21,
+   "ts": "2026-09-02T07:58:17+00:00",
+   "call": 5,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_repo",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request"
+   },
+   "reasoning": "The leading fork has 155 stars and a 2026 push, so it is the only plausible successor lead. Establish its ownership, archival state, and maintenance timestamps.",
+   "observation": "postmanlabs/postman-request — Simplified HTTP request client.\nstars 155, forks 49, open issues+PRs 3\ncreated 2016-08-23, last push 2026-07-21, default branch master\nlicense: Apache-2.0, language: JavaScript, size 3,022 KB\narchived: False, disabled: False, fork: True (parent: request/request)",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 25
+  },
+  {
+   "id": 22,
+   "ts": "2026-09-02T07:58:17+00:00",
+   "call": 5,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_file",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request",
+    "path": "README.md"
+   },
+   "reasoning": "A recent push does not prove a supported replacement. Read the fork’s own README for purpose, deprecation, and adoption guidance.",
+   "observation": "README.md @ default branch (54,234 chars):\n\n# Request - Simplified HTTP client\n\nThis is a fork of the excellent `request` module, which is used inside Postman Runtime. It contains a few bugfixes that are not fixed in `request`:\n\n- Handling of old-style deflate responses: https://github.com/request/request/issues/2197\n- Correct encoding of URL Parameters: https://github.com/nodejs/node/issues/8321\n- Redirect behavior for 307 responses when Host header is set: https://github.com/request/request/issues/2666\n- Fix missing `content-length` header for streaming requests: https://github.com/request/request/issues/316\n- Exception handling for large form-data: https://github.com/request/request/issues/1561\n- Added feature to bind on stream emits via options\n- Allowed sending request body with HEAD method\n- Added option to retain `authorization` header when a redirect happens to a different hostname\n- Reinitialize FormData stream on 307 or 308 redirects\n- Respect form-data fields ordering\n- Fixed authentication leak in 307 and 308 redirects\n- Added `secureConnect` to timings and `secureHandshake` to timingPhases\n- Fixed `Request~getNewAgent` to account for `passphrase` while generating poolKey\n- Added support for extending the root CA certificates\n- Added `verbose` mode to bubble up low-level request-response information\n\n## Super simple to use\n\nRequest is designed to be the simplest way possible to make http calls. It supports HTTPS and follows redirects by default.\n\n```js\nconst request = require('postman-request');\nrequest('http://www.google.com', function (error, response, body) {\n  console.log('error:', error); // Print the error if one occurred\n  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received\n  console.log('body:', body); // Print the HTML for the Google homepage.\n});\n```\n\n\n## Table of contents\n\n- [Streaming](#streaming)\n- [Promises & Async/Await](#promises--asyncawait)\n- [Forms](#forms)\n- [HTTP Authentication](#http-authentication)\n- [Custom HTTP Headers](#custom-http-headers)\n- [OAuth Signing](#oauth-signing)\n- [Proxies](#proxies)\n- [Unix Domain Sockets](#unix-domain-sockets)\n- [TLS/SSL Protocol](#tlsssl-protocol)\n- [Support for HAR 1.2](#support-for-har-12)\n- [**All Available Options**](#requestoptions-callback)\n\nRequest also offers [convenience methods](#convenience-methods) like\n`request.defaults` and `request.post`, and there are\nlots of [usage examples](#examples) and several\n[debugging techniques](#debugging).\n\n\n---\n\n\n## Streaming\n\nYou can stream any response to a file stream.\n\n```js\nrequest('http://google.com/doodle.png').pipe(fs.createWriteStream('doodle.png'))\n```\n\nYou can also stream a file to a PUT or POST request. This method will also check the file extension against a mapping of file extensions to content-types (in this case `application/json`) and use the proper `content-type` in the PUT request (if the headers don’t already provide one).\n\n```js\nfs.createReadStream('file.json').pipe(request.put('http://mysite.com/obj.json'))\n```\n\nRequest can also `pipe` to itself. When doing so, `content-type` and `content-length` are preserved in the PUT headers.\n\n```js\nrequest.get('http://google.com/img.png').pipe(request.put('http://mysite.com/img.png'))\n```\n\nRequest emits a \"response\" event when a response is received. The `response` argument will be an instance of [http.IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage).\n\n```js\nrequest\n  .get('http://google.com/img.png')\n  .on('response', function(response) {\n    console.log(response.statusCode) // 200\n    console.log(response.headers['content-type']) // 'image/png'\n  })\n  .pipe(request.put('http://mysite.com/img.png'))\n```\n\nTo easily handle errors when streaming requests, listen to the `error` event before piping:\n\n```js\nrequest\n  .get('http://mysite.com/doodle.png')\n  .on('error', function(err) {\n    console.log(err)\n  })\n  .pipe(fs.createWriteStream('doodle.png'))\n```\n\nNow let’s get fancy.\n\n```js\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    if (req.method === 'PUT') {\n      req.pipe(request.put('http://mysite.com/doodle.png'))\n    } else if (req.method === 'GET' || req.method === 'HEAD') {\n      request.get('http://mysite.com/doodle.png').pipe(resp)\n    }\n  }\n})\n```\n\nYou can also `pipe()` from `http.ServerRequest` instances, as well as to `http.ServerResponse` instances. The HTTP method, headers, and entity-body data will be sent. Which means that, if you don't really care about security, you can do:\n\n```js\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    const x = request('http://mysite.com/doodle.png')\n    req.pipe(x)\n    x.pipe(resp)\n  }\n})\n```\n\nAnd since `pipe()` returns the destination stream in ≥ Node 0.5.x you can do one line proxying. :)\n\n```js\nreq.pipe(request('http://mysite.com/doodle.png')).pipe(resp)\n```\n\nAlso, none of this new functionality conflicts with requests previous features, it just expands them.\n\n```js\nconst r = request.defaults({'proxy':'http://localproxy.com'})\n\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    r.get('http://google.com/doodle.png').pipe(resp)\n  }\n})\n```\n\nYou can still use intermediate proxies, the requests will still follow HTTP forwards, etc.\n\n[back to top](#table-of-contents)\n\n\n---\n\n\n## Promises & Async/Await\n\n`request` supports both streaming and callback interfaces natively. If you'd like `request` to return a Promise instead, you can use an alternative interface wrapper for `request`. These wrappers can be useful if you prefer to work with Promises, or if you'd like to use `async`/`await` in ES2017.\n\nSeveral alternative interfaces are provided by the request team, including:\n- [`request-promise`](https://github.com/request/request-promise) (uses [Bluebird](https://github.com/petkaantonov/bluebird) Promises)\n- [`request-promise-native`](https://github.com/request/request-promise-native) (uses native Promises)\n- [`request-promise-any`\n...[truncated — 48,234 more chars]",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 25
+  },
+  {
+   "id": 23,
+   "ts": "2026-09-02T07:58:17+00:00",
+   "call": 5,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_file",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request",
+    "path": "package.json"
+   },
+   "reasoning": "The fork may publish under a different npm name and version. Its manifest determines whether consumers can practically adopt it and supports advisory lookup.",
+   "observation": "package.json @ default branch (1,975 chars):\n{\n  \"name\": \"postman-request\",\n  \"description\": \"Simplified HTTP request client.\",\n  \"keywords\": [\n    \"http\",\n    \"simple\",\n    \"util\",\n    \"utility\"\n  ],\n  \"version\": \"2.88.1-postman.49\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/postmanlabs/postman-request.git\"\n  },\n  \"license\": \"Apache-2.0\",\n  \"engines\": {\n    \"node\": \">= 16\"\n  },\n  \"main\": \"index.js\",\n  \"files\": [\n    \"lib/\",\n    \"index.js\",\n    \"request.js\"\n  ],\n  \"dependencies\": {\n    \"@postman/form-data\": \"~3.1.1\",\n    \"@postman/tough-cookie\": \"~4.1.3-postman.1\",\n    \"@postman/tunnel-agent\": \"^0.6.8\",\n    \"aws-sign2\": \"~0.7.0\",\n    \"aws4\": \"^1.12.0\",\n    \"caseless\": \"~0.12.0\",\n    \"combined-stream\": \"~1.0.6\",\n    \"extend\": \"~3.0.2\",\n    \"forever-agent\": \"~0.6.1\",\n    \"http-signature\": \"~1.4.0\",\n    \"is-typedarray\": \"~1.0.0\",\n    \"isstream\": \"~0.1.2\",\n    \"json-stringify-safe\": \"~5.0.1\",\n    \"mime-types\": \"^2.1.35\",\n    \"oauth-sign\": \"~0.9.0\",\n    \"qs\": \"~6.14.1\",\n    \"safe-buffer\": \"^5.1.2\",\n    \"socks-proxy-agent\": \"^8.0.5\",\n    \"stream-length\": \"^1.0.2\",\n    \"uuid\": \"^8.3.2\"\n  },\n  \"scripts\": {\n    \"test\": \"npm run lint && npm run test-ci && npm run test-browser\",\n    \"test-ci\": \"taper tests/test-*.js\",\n    \"test-cov\": \"istanbul cover tape tests/test-*.js\",\n    \"test-browser\": \"node tests/browser/start.js\",\n    \"lint\": \"standard\"\n  },\n  \"devDependencies\": {\n    \"bluebird\": \"^3.2.1\",\n    \"browserify\": \"^16.5.2\",\n    \"browserify-istanbul\": \"^3.0.0\",\n    \"buffer-equal\": \"^1.0.1\",\n    \"codecov\": \"^3.0.4\",\n    \"coveralls\": \"^3.0.2\",\n    \"function-bind\": \"^1.0.2\",\n    \"istanbul\": \"^0.4.0\",\n    \"karma\": \"^6.4.4\",\n    \"karma-browserify\": \"^8.1.0\",\n    \"karma-chrome-launcher\": \"^3.1.1\",\n    \"karma-cli\": \"^2.0.0\",\n    \"karma-coverage\": \"^2.2.1\",\n    \"karma-tap\": \"^4.2.0\",\n    \"postman-url-encoder\": \"^3.0.6\",\n    \"puppeteer\": \"^1.20.0\",\n    \"rimraf\": \"^2.2.8\",\n    \"server-destroy\": \"^1.0.1\",\n    \"standard\": \"^9.0.0\",\n    \"tape\": \"^4.6.0\",\n    \"taper\": \"^0.5.0\"\n  }\n}\n",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 25
+  },
+  {
+   "id": 24,
+   "ts": "2026-09-02T07:58:18+00:00",
+   "call": 5,
+   "phase": "retask: now check the biggest fork",
+   "tool": "list_commits",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request",
+    "per_page": 30
+   },
+   "reasoning": "The fork’s 2026 push could be mechanical. Inspect recent commits and authors to determine whether security-relevant maintenance actually landed.",
+   "observation": "30 commits (no filters, newest first):\n- 02741a5589 [2026-07-21] appurva21: 2.88.1-postman.49\n- 286e0b28b0 [2026-07-21] MrRobotBaguette: APICLIENT-3136: security: strip Cookie on cross-origin redirect and use full-origin check (#113)\n- bbc0e4e1f2 [2026-01-15] saecula: 2.88.1-postman.48\n- 6354da7fc8 [2026-01-15] saecula: Merge pull request #111 from rm-maxport/update/qs-package\n- 02963ca632 [2026-01-13] rm-maxport: chore: update qs package to latest version\n- 5caf57af15 [2025-12-11] appurva21: 2.88.1-postman.47\n- 1741509f8f [2025-12-11] deve-sh: feat: Handle request errors with attached responses (#108)\n- 439256cc51 [2025-12-11] appurva21: fix: http agent failing test\n- 5852ea53ce [2025-10-30] appurva21: 2.88.1-postman.46\n- c16bd7d0e4 [2025-10-30] appurva21: Merge pull request #107 from postmanlabs/feature/fix-unix-domain-socket-detection\n- 8503f2049e [2025-10-30] appurva21: fix: unix domain socket detection\n- 2cd9be29cd [2025-10-16] appurva21: 2.88.1-postman.45\n- a368191776 [2025-10-16] appurva21: Merge pull request #106 from postmanlabs/feature/remove-unwanted-dependency\n- 5961af2545 [2025-10-16] appurva21: fix: remove unwanted dependency\n- 4d29675f01 [2025-10-16] appurva21: 2.88.1-postman.44\n- 838bb12b4e [2025-10-16] appurva21: Merge pull request #105 from postmanlabs/feature/ssl-keylog\n- a15cc38cd3 [2025-10-15] parthverma1: chore: lint\n- b581f5b33b [2025-10-15] parthverma1: chore: test for sslKeyLogFile option\n- 7fc166a588 [2025-10-15] parthverma1: chore: rename option `keyLog` to `sslKeyLogFile`\n- 6ba217d912 [2025-10-10] parthverma1: chore: ignore 'fs/promises' in browser tests bundle\n- 4cdac7c330 [2025-10-09] parthverma1: fix: Failing HTTP agents tests\n- 8835643820 [2025-10-08] parthverma1: chore: linter fixes\n- c775b46ef5 [2025-10-08] parthverma1: chore: add/remove logging statement\n- 796586e23d [2025-10-08] parthverma1: fix: Only attach keylog event once on the socket, and partition the agents based on keylog file path\n- 4e06eebca4 [2025-10-07] parthverma1: chore: Switch to async method for appending keylog material\n- e3e63abbfc [2025-10-07] parthverma1: feat: Add support for capturing SSL session keys via `keyLog` option\n- c41fddeee7 [2025-07-30] appurva21: 2.88.1-postman.43\n- 83f42240d3 [2025-07-30] appurva21: Merge pull request #104 from postmanlabs/feature/socks-proxy\n- 5d2c29a298 [2025-07-30] appurva21: Remove socks proxy agent for browser tests\n- bd08b97b78 [2025-07-29] appurva21: Add support for SOCKS proxy\n(showing the 30 most recent — there may be more; narrow with since/until/author)",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 25
+  },
+  {
+   "id": 25,
+   "ts": "2026-09-02T07:58:18+00:00",
+   "call": 5,
+   "phase": "retask: now check the biggest fork",
+   "tool": "list_pulls",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request",
+    "state": "all",
+    "per_page": 20
+   },
+   "reasoning": "Merged PR recency is stronger evidence of active governance than a push timestamp. Inspect the fork’s PR outcome.",
+   "observation": "20 all PRs (most recently updated first):\n- #114 [open] Update CI Node and Windows matrix (by appurva21)\n- #113 [merged 2026-07-21] APICLIENT-3136: security: strip Cookie on cross-origin redirect and use full-ori (by MrRobotBaguette)\n- #112 [open] Please deprecate beta versions that sort above stable releases due to semver ord (by Tsarter)\n- #110 [open] BREAKING CHANGE : upgrade nodejs support till 24 and fix security vulns (by samarpanB)\n- #111 [merged 2026-01-15] chore: update qs package to latest version (by rm-maxport)\n- #108 [merged 2025-12-11] feat: Handle request errors with attached responses (by deve-sh)\n- #109 [closed] Trial branch to verify tests regression (by deve-sh)\n- #107 [merged 2025-10-30] fix: unix domain socket detection (by appurva21)\n- #106 [merged 2025-10-16] fix: remove unwanted dependency (by appurva21)\n- #105 [merged 2025-10-16] feat: Add support for capturing SSL session keys via `keyLog` option (by parthverma1)\n- #104 [merged 2025-07-30] Added support for SOCKS proxy (by appurva21)\n- #103 [merged 2025-02-24] Remove dead dependency on `brotli` (by wojtekmaj)\n- #100 [merged 2025-02-23] Removing deprecated har-validator library (by davidcao1337)\n- #101 [merged 2025-02-03] HTTP/2 authority header missing port (by parthverma1)\n- #99 [merged 2024-09-04] Fix HTTP/2 connection refs causing event loop to not exit (by parthverma1)\n- #98 [merged 2024-08-16] Fix Auto Requests crashing after client network disconnect (by parthverma1)\n- #97 [merged 2024-08-06] Added empty CRLF for http2 sent headers to avoid skipping missed headers in debu (by parthverma1)\n- #93 [merged 2024-07-23] Added support for HTTP/2 (by parthverma1)\n- #96 [merged 2024-08-01] Added dynamic  endstream  (by parthverma1)\n- #95 [merged 2024-07-26] Added exception handlers when removing listeners from http2 sockets (by parthverma1)\nsummary: 16 of 20 listed PRs were merged; most recent merge 2026-07-21",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 25
+  },
+  {
+   "id": 26,
+   "ts": "2026-09-02T07:58:19+00:00",
+   "call": 5,
+   "phase": "retask: now check the biggest fork",
+   "tool": "list_issues",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request",
+    "state": "open",
+    "sort": "updated",
+    "per_page": 20
+   },
+   "reasoning": "The original’s unresolved SSRF is decisive; inspect the fork’s live issues for its own vulnerability and responsiveness signal.",
+   "observation": "no open issues found (3 pull requests excluded).",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 25
+  },
+  {
+   "id": 27,
+   "ts": "2026-09-02T07:58:19+00:00",
+   "call": 5,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_security_advisories",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request"
+   },
+   "reasoning": "Look for maintainer-published security records in the candidate successor, independent of its code lineage.",
+   "observation": "no repository-published security advisories. NOTE: maintainers often never publish repo-level advisories even when CVEs exist — cross-check with osv_query using the package name from the manifest (e.g. package.json).",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 25
+  },
+  {
+   "id": 28,
+   "ts": "2026-09-02T07:58:19+00:00",
+   "call": 5,
+   "phase": "retask: now check the biggest fork",
+   "tool": "list_contributors",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request"
+   },
+   "reasoning": "If the fork is actively maintained, contributor concentration and named stewards matter. Establish whether it is a one-person veneer.",
+   "observation": "top 10 of 30 listed contributors (share of the top-30 commit total — a proxy for bus factor):\n- mikeal: 622 commits (29.6%)\n- simov: 475 commits (22.6%)\n- nylen: 300 commits (14.3%)\n- codenirvana: 205 commits (9.7%)\n- greenkeeperio-bot: 49 commits (2.3%)\n- seanstrom: 46 commits (2.2%)\n- FredKSchott: 38 commits (1.8%)\n- kunagpal: 35 commits (1.7%)\n- isaacs: 32 commits (1.5%)\n- coditva: 31 commits (1.5%)",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 25
+  },
+  {
+   "id": 29,
+   "ts": "2026-09-02T07:58:25+00:00",
+   "call": 6,
+   "phase": "retask: now check the biggest fork",
+   "tool": "osv_query",
+   "args": {
+    "package": "postman-request",
+    "ecosystem": "npm"
+   },
+   "reasoning": "The fork is actively releasing under postman-request; query OSV for its published package identity before treating its security maintenance as sufficient.",
+   "observation": "OSV: no known vulnerabilities recorded for npm package 'postman-request'.",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 24
+  },
+  {
+   "id": 30,
+   "ts": "2026-09-02T07:58:25+00:00",
+   "call": 6,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_commit",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request",
+    "sha": "286e0b28b0"
+   },
+   "reasoning": "A 2026 commit claims to harden cross-origin redirects. Inspect its diff to determine whether it addresses the original SSRF/cross-origin security exposure or merely advertises security.",
+   "observation": "commit 286e0b28b0 by MrRobotBaguette on 2026-07-21\nmessage: APICLIENT-3136: security: strip Cookie on cross-origin redirect and use full-origin check (#113)\nstats: 3 files changed, +362 -4\n\n--- tests/test-redirect-cookie.js (+249 -0, added)\n@@ -0,0 +1,249 @@\n+'use strict'\n+\n+var tape = require('tape')\n+var destroyable = require('server-destroy')\n+\n+var server = require('./server')\n+var request = require('../index')\n+var url = require('url')\n+var Redirect = require('../lib/redirect').Redirect\n+\n+function lookupLocalhost (hostname, options, callback) {\n+  callback(null, '127.0.0.1', 4)\n+}\n+\n+function redirectResponse (location) {\n+  return {\n+    statusCode: 302,\n+    caseless: {\n+      has: function (header) {\n+        return header.toLowerCase() === 'location'\n+      },\n+      get: function () {\n+        return location\n+      }\n+    },\n+    resume: function () {}\n+  }\n+}\n+\n+function requestForRedirect (from, to) {\n+  var req = {\n+    uri: url.parse(from),\n+    urlParser: url,\n+    headers: {\n+      host: 'example.com',\n+      cookie: 'manual=1'\n+    },\n+    originalCookieHeader: 'manual=1',\n+    method: 'GET',\n+    debug: function () {},\n+    removeHeader: function (header) {\n+      delete this.headers[header.toLowerCase()]\n+    },\n+    setHeader: function (header, value) {\n+      this.headers[header.toLowerCase()] = value\n+    },\n+    emit: function () {},\n+    init: function () {}\n+  }\n+\n+  var redirect = new Redirect(req)\n+  redirect.onResponse(redirectResponse(to))\n+  return req\n+}\n+\n+function runTest (t, statusCode) {\n+  var s = server.createServer()\n+  var redirects = 0\n+  var cookieHeader = 'manual=1'\n+  var jar = request.jar()\n+\n+  destroyable(s)\n+\n+  s.on('/', function (req, res) {\n+    if (req.headers.host === `${s.redirectHost}:${s.port}`) {\n+      res.writeHead(statusCode || 302, {\n+        location: `http://${s.respondHost}:${s.port}/`\n+      })\n+      res.end()\n+    } else if (req.headers.host === `${s.respondHost}:${s.port}`) {\n+      res.writeHead(200)\n+      res.end('cookie: ' + (req.headers.cookie || '(nothing)'))\n+    } else {\n+      res.writeHead(400)\n+      res.end('unknown host')\n+    }\n+  })\n+\n+  s.listen(0, function () {\n...[patch truncated, 170 more lines]\n\n--- tests/test-redirect-auth.js (+91 -1, modified)\n@@ -5,6 +5,8 @@ var request = require('../index')\n var util = require('util')\n var tape = require('tape')\n var destroyable = require('server-destroy')\n+var url = require('url')\n+var Redirect = require('../lib/redirect').Redirect\n \n var s = server.createServer()\n var ss = server.createSSLServer()\n@@ -80,14 +82,91 @@ function runTest (name, redir, expectAuth) {\n   })\n }\n \n+function redirectResponse (location) {\n+  return {\n+    statusCode: 302,\n+    caseless: {\n+      has: function (header) {\n+        return header.toLowerCase() === 'location'\n+      },\n+      get: function () {\n+        return location\n+      }\n+    },\n+    resume: function () {}\n+  }\n+}\n+\n+function requestForRedirect (from, to) {\n+  var req = {\n+    uri: url.parse(from),\n+    urlParser: url,\n+    headers: {\n+      host: 'example.com',\n+      authorization: 'Basic abc'\n+    },\n+    method: 'GET',\n+    debug: function () {},\n+    removeHeader: function (header) {\n+      delete this.headers[header.toLowerCase()]\n+    },\n+    setHeader: function (header, value) {\n+      this.headers[header.toLowerCase()] = value\n+    },\n+    emit: function () {},\n+    init: function () {}\n+  }\n+\n+  var redirect = new Redirect(req)\n+  redirect.onResponse(redirectResponse(to))\n+  return req\n+}\n+\n+function runPortTest () {\n+  tape('redirect to same host different port', function (t) {\n+    var from = server.createServer()\n+    var to = server.createServer()\n+\n+    destroyable(from)\n+    destroyable(to)\n+\n+    from.on('/', function (req, res) {\n+      res.writeHead(301, {\n+        location: to.url + '/'\n+      })\n+      res.end()\n+    })\n+\n+    to.on('/', function (req, res) {\n+      res.end('auth: ' + (req.headers.authorization || '(nothing)'))\n+    })\n+\n+    from.listen(0, function () {\n+      to.listen(0, function () {\n+        request(from.url, function (err, res, body) {\n+          t.equal(err, null)\n+          t.equal(res.request.uri.href, to.url + '/')\n+          t.equal(res.statusCode, 200)\n+          t.equal(body, 'auth: (nothing)')\n+          from.destroy(function () {\n...[patch truncated, 44 more lines]\n\n--- lib/redirect.js (+22 -3, modified)\n@@ -3,6 +3,14 @@\n var fs = require('fs')\n var isUrl = /^https?:/\n \n+function defaultPort (protocol) {\n+  return protocol === 'https:' ? '443' : '80'\n+}\n+\n+function origin (uri) {\n+  return uri.protocol + '//' + uri.hostname + ':' + (uri.port || defaultPort(uri.protocol))\n+}\n+\n function Redirect (request) {\n   this.request = request\n   this.followRedirect = true\n@@ -123,14 +131,25 @@ Redirect.prototype.onResponse = function (response) {\n \n   self.redirects.push({ statusCode: response.statusCode, redirectUri: redirectTo })\n \n-  // if the redirect hostname (not just port or protocol) is changed:\n+  // if the redirect origin (protocol, hostname or port) is changed:\n   //  1. remove host header, the new host will be populated on request.init\n-  //  2. remove authorization header, avoid authentication leak\n+  //  2. remove cookie header, avoid session leak across origins\n+  //  3. remove authorization header, avoid authentication leak\n   // @note: This is done because of security reasons, irrespective of the\n   // status code or request method used.\n-  if (request.headers && uriPrev.hostname !== request.uri.hostname) {\n+  // @note: comparing full origin (protocol + hostname + port) so that\n+  // credentials are not leaked across ports or on a protocol downgrade\n+  // (e.g. https -> http), not just when the hostname changes.\n+  if (request.headers && origin(uriPrev) !== origin(request.uri)) {\n     request.removeHeader('host')\n \n+    // remove cookie header, avoid session cookie leak across origins\n+    request.removeHeader('cookie')\n+\n+    // clear the cached original cookie header so it isn't re-prepended\n+    // to the Cookie header on subsequent hops (see Request.prototype.jar)\n+    delete request.originalCookieHeader\n+\n     // use followAuthorizationHeader option to retain authorization header\n     if (!self.followAuthorizationHeader) {\n       request.removeHeader('authorization')",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 24
+  },
+  {
+   "id": 31,
+   "ts": "2026-09-02T07:58:26+00:00",
+   "call": 6,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_user",
+   "args": {
+    "login": "appurva21"
+   },
+   "reasoning": "Appurva21 repeatedly authors releases and merges in the active fork. Profile the current release steward behind the candidate successor.",
+   "observation": "appurva21 (User) — Appurva Murawat\naccount created 2017-01-08, 11 public repos, 28 followers\ncompany: @postmanlabs\nlocation: Bangalore\nbio: Engineer @postmanlabs",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 24
+  },
+  {
+   "id": 32,
+   "ts": "2026-09-02T07:58:26+00:00",
+   "call": 6,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_user",
+   "args": {
+    "login": "MrRobotBaguette"
+   },
+   "reasoning": "MrRobotBaguette authored the recent security-sensitive redirect change. Identify the named author behind that mitigation.",
+   "observation": "MrRobotBaguette (User) — no display name\naccount created 2026-05-11, 0 public repos, 0 followers",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 24
+  },
+  {
+   "id": 33,
+   "ts": "2026-09-02T07:58:26+00:00",
+   "call": 6,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_user_events",
+   "args": {
+    "login": "appurva21"
+   },
+   "reasoning": "The release steward’s current activity is a useful corroboration that the fork’s 2026 release cadence reflects an active maintainer.",
+   "observation": "15 recent public events for appurva21, from 2026-08-07 to 2026-09-01: IssuesEvent×8, IssueCommentEvent×7\nmost recent: IssuesEvent on postmanlabs/postman-app-support at 2026-09-01\nNOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline.",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 24
+  },
+  {
+   "id": 34,
+   "ts": "2026-09-02T07:58:27+00:00",
+   "call": 6,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_user_events",
+   "args": {
+    "login": "MrRobotBaguette"
+   },
+   "reasoning": "The security-change author’s recent activity helps distinguish an actively maintained organizational patch from an orphaned contribution.",
+   "observation": "no public activity for MrRobotBaguette in GitHub's recent-events window. NOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline.",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 24
+  },
+  {
+   "id": 35,
+   "ts": "2026-09-02T07:58:35+00:00",
+   "call": 7,
+   "phase": "retask: now check the biggest fork",
+   "tool": "render_verdict",
+   "args": {
+    "decision": "reject"
+   },
+   "reasoning": "The largest fork is a genuinely active, separately published Postman-maintained derivative with a recent redirect credential-leak hardening patch and no OSV records. That is useful migration evidence, but it does not repair the decision on the requested dependency, request/request, whose explicit retirement and unfixed SSRF remain unchanged.",
+   "observation": "SENIOR REVIEW: verdict (reject) handed back for a second look after 3 call(s) — anomalies must be pursued or explicitly closed before concluding",
+   "api_requests": 0,
+   "error": null,
+   "budget_after": 23
+  },
+  {
+   "id": 36,
+   "ts": "2026-09-02T07:58:41+00:00",
+   "call": 8,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_commit",
+   "args": {
+    "owner": "request",
+    "repo": "request",
+    "sha": "aded7e4f8e"
+   },
+   "reasoning": "The original deprecation author is named, but the exact diff has not been read. Inspect it to close the named-author outcome on the retirement action.",
+   "observation": "commit aded7e4f8e by mikeal on 2020-02-11\nmessage: doc: note full deprecation (#3267)\nstats: 1 files changed, +6 -0\n\n--- README.md (+6 -0, modified)\n@@ -1,3 +1,9 @@\n+# Deprecated!\n+\n+As of Feb 11th 2020, request is fully deprecated. No new changes are expected land. In fact, none have landed for some time.\n+\n+For more information about why request is deprecated and possible alternatives refer to\n+[this issue](https://github.com/request/request/issues/3142).\n \n # Request - Simplified HTTP client\n ",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 22
+  },
+  {
+   "id": 37,
+   "ts": "2026-09-02T07:58:42+00:00",
+   "call": 8,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_commit",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request",
+    "sha": "02741a5589"
+   },
+   "reasoning": "The candidate fork’s July 2026 version bump may be the release commit for its security patch. Inspect its diff to establish whether the security change was actually versioned.",
+   "observation": "commit 02741a5589 by appurva21 on 2026-07-21\nmessage: 2.88.1-postman.49\nstats: 1 files changed, +1 -1\n\n--- package.json (+1 -1, modified)\n@@ -7,7 +7,7 @@\n     \"util\",\n     \"utility\"\n   ],\n-  \"version\": \"2.88.1-postman.48\",\n+  \"version\": \"2.88.1-postman.49\",\n   \"repository\": {\n     \"type\": \"git\",\n     \"url\": \"https://github.com/postmanlabs/postman-request.git\"",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 22
+  },
+  {
+   "id": 38,
+   "ts": "2026-09-02T07:58:42+00:00",
+   "call": 8,
+   "phase": "retask: now check the biggest fork",
+   "tool": "list_commits",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request",
+    "since": "2026-07-20",
+    "until": "2026-07-22",
+    "author": "appurva21",
+    "per_page": 30
+   },
+   "reasoning": "Appurva21 is the organizational release steward; inspect their commits around the latest release to link named stewardship to the published version.",
+   "observation": "1 commits (since=2026-07-20, until=2026-07-22, author=appurva21, newest first):\n- 02741a5589 [2026-07-21] appurva21: 2.88.1-postman.49",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 22
+  },
+  {
+   "id": 39,
+   "ts": "2026-09-02T07:58:42+00:00",
+   "call": 8,
+   "phase": "retask: now check the biggest fork",
+   "tool": "list_commits",
+   "args": {
+    "owner": "postmanlabs",
+    "repo": "postman-request",
+    "since": "2026-07-20",
+    "until": "2026-07-22",
+    "author": "MrRobotBaguette",
+    "per_page": 30
+   },
+   "reasoning": "MrRobotBaguette authored the redirect hardening patch. Retrieve their fork timeline around the patch to close the named-author outcome.",
+   "observation": "1 commits (since=2026-07-20, until=2026-07-22, author=MrRobotBaguette, newest first):\n- 286e0b28b0 [2026-07-21] MrRobotBaguette: APICLIENT-3136: security: strip Cookie on cross-origin redirect and use full-origin check (#113)",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 22
+  },
+  {
+   "id": 40,
+   "ts": "2026-09-02T07:58:43+00:00",
+   "call": 8,
+   "phase": "retask: now check the biggest fork",
+   "tool": "get_user",
+   "args": {
+    "login": "SzymonDrosdzol"
+   },
+   "reasoning": "The original SSRF report is an unanswered-security-report anomaly. Identify its named reporter so the disclosure outcome is attributed rather than anonymous.",
+   "observation": "SzymonDrosdzol (User) — no display name\naccount created 2021-05-24, 3 public repos, 7 followers\ncompany: Doyensec",
+   "api_requests": 1,
+   "error": null,
+   "budget_after": 22
+  },
+  {
+   "id": 41,
+   "ts": "2026-09-02T07:58:52+00:00",
+   "call": 9,
+   "phase": "retask: now check the biggest fork",
+   "tool": "render_verdict",
+   "args": {
+    "decision": "reject"
+   },
+   "reasoning": "The review-requested anomalies have now been closed: no malicious-code record was returned; the original retirement was authored by Mikeal and its full-deprecation diff was inspected; the unanswered SSRF disclosure is attributed to SzymonDrosdzol of Doyensec; and the fork’s current security patch, named author, and release bump were inspected. The original package’s decisive abandonment and unfixed SSRF findings remain intact.",
+   "observation": "verdict v2 recorded: reject",
+   "api_requests": 0,
+   "error": null,
+   "budget_after": 21
+  }
+ ],
+ "verdicts": [
+  {
+   "decision": "reject",
+   "summary": "Reject request/request. Mikeal Rogers authored the 2020 full-deprecation commit after publicly proposing maintenance mode; the README says no new changes are expected. A security researcher’s 2023 SSRF report says direct emails to the maintainer received no answer, and OSV lists the SSRF with no fix. Although active forks exist, the investigation did not establish any as a drop-in, security-maintained successor to the published request package; the original package is abandoned with an unresolved vulnerability.",
+   "confidence": "high",
+   "evidence": [
+    {
+     "claim": "The project explicitly declares itself deprecated and says no new changes are expected.",
+     "step_id": 2,
+     "data_point": "# Deprecated!\n\nAs of Feb 11th 2020, request is fully deprecated. No new changes are expected to land.",
+     "verified": true
+    },
+    {
+     "claim": "The published package is request version 2.88.1.",
+     "step_id": 3,
+     "data_point": "\"name\": \"request\" ... \"version\": \"2.88.1\"",
+     "verified": true
+    },
+    {
+     "claim": "OSV records an SSRF vulnerability with no fix listed.",
+     "step_id": 4,
+     "data_point": "Server-Side Request Forgery in Request\n  introduced 0, no fix listed",
+     "verified": true
+    },
+    {
+     "claim": "The named package author, Mikeal, authored the full-deprecation commit in the retirement window.",
+     "step_id": 18,
+     "data_point": "aded7e4f8e [2020-02-11] mikeal: doc: note full deprecation (#3267)",
+     "verified": true
+    },
+    {
+     "claim": "Mikeal’s retirement issue states that request should enter maintenance mode and stop new features or major releases.",
+     "step_id": 11,
+     "data_point": "The most valuable thing `request` can do for the JavaScript ecosystem is to go into maintenance mode and stop considering new features or major releases.",
+     "verified": true
+    },
+    {
+     "claim": "The SSRF reporter states that direct disclosure emails to the maintainer received no answer.",
+     "step_id": 10,
+     "data_point": "we have tried to contact the maintainer directly on 12/02/2022 and 01/18/2023 via [email](mikeal.rogers@gmail.com), but we have received no answer.",
+     "verified": true
+    },
+    {
+     "claim": "The PR history reports no merged PR after February 2020.",
+     "step_id": 8,
+     "data_point": "summary: 1 of 20 listed PRs were merged; most recent merge 2020-02-11",
+     "verified": true
+    },
+    {
+     "claim": "Active forks exist, but this only establishes fork activity, not a vetted replacement for the original package.",
+     "step_id": 19,
+     "data_point": "postmanlabs/postman-request: 155 stars, last push 2026-07-21",
+     "verified": true
+    }
+   ],
+   "conditions": [],
+   "unverified_notes": [
+    "No malicious-code or hidden-functionality record was returned by the OSV package query.",
+    "GitHub recent-events lookups returned no public activity for mikeal, simov, or nylen, but the tool notes that this window is limited to roughly 90 days and does not prove long-term inactivity.",
+    "Active forks were identified but not investigated as replacement candidates because the decision concerns the original request/request package."
+   ],
+   "changed_from_previous": null,
+   "validation_passed": true,
+   "validation_errors": [],
+   "version": 1,
+   "trigger": "initial",
+   "budget_used_at_render": 4,
+   "rendered_at": "2026-09-02T07:56:35+00:00"
+  },
+  {
+   "decision": "reject",
+   "summary": "Reject request/request unchanged. All raised anomalies were pursued: OSV returned no malicious-code record; Mikeal authored and committed the original project’s full-deprecation notice; SzymonDrosdzol of Doyensec reported the unanswered SSRF disclosure; and the largest fork was confirmed as an active, separately named Postman package with a security patch incorporated in its July 2026 version bump. That fork does not change the requested package’s status: request itself remains retired, unmaintained since 2020, and recorded by OSV with an SSRF vulnerability for which no fix is listed.",
+   "confidence": "high",
+   "evidence": [
+    {
+     "claim": "Mikeal authored the original repository’s full-deprecation commit.",
+     "step_id": 36,
+     "data_point": "commit aded7e4f8e by mikeal on 2020-02-11\nmessage: doc: note full deprecation (#3267)",
+     "verified": true
+    },
+    {
+     "claim": "That retirement commit adds the statement that request is fully deprecated and no new changes are expected.",
+     "step_id": 36,
+     "data_point": "As of Feb 11th 2020, request is fully deprecated. No new changes are expected land.",
+     "verified": true
+    },
+    {
+     "claim": "OSV records an SSRF vulnerability for request with no fix listed.",
+     "step_id": 4,
+     "data_point": "Server-Side Request Forgery in Request\n  introduced 0, no fix listed",
+     "verified": true
+    },
+    {
+     "claim": "The SSRF report says direct emails to the maintainer received no answer.",
+     "step_id": 10,
+     "data_point": "we have received no answer.",
+     "verified": true
+    },
+    {
+     "claim": "The named SSRF reporter is associated with Doyensec.",
+     "step_id": 40,
+     "data_point": "SzymonDrosdzol (User) ... company: Doyensec",
+     "verified": true
+    },
+    {
+     "claim": "The original repository’s PR history reports its most recent merge was in 2020.",
+     "step_id": 8,
+     "data_point": "summary: 1 of 20 listed PRs were merged; most recent merge 2020-02-11",
+     "verified": true
+    },
+    {
+     "claim": "The biggest fork is separately published as postman-request.",
+     "step_id": 23,
+     "data_point": "\"name\": \"postman-request\" ... \"version\": \"2.88.1-postman.49\"",
+     "verified": true
+    },
+    {
+     "claim": "The fork’s security patch was followed the same day by a version bump to 2.88.1-postman.49.",
+     "step_id": 37,
+     "data_point": "commit 02741a5589 by appurva21 on 2026-07-21\nmessage: 2.88.1-postman.49",
+     "verified": true
+    }
+   ],
+   "conditions": [],
+   "unverified_notes": [
+    "OSV returned no malicious-code or hidden-functionality record for request, but this investigation did not inspect npm tarballs or registry publisher identities.",
+    "The largest fork was not fully assessed as a replacement: release-to-registry publication linkage and specific remediation of CVE-2023-28155 were not verified."
+   ],
+   "changed_from_previous": "The decision remains reject. The additional investigation confirms that the largest fork is active and separately versioned, but it also confirms the original project’s retirement was deliberately committed by Mikeal and does not resolve request’s recorded unfixed SSRF vulnerability or its absence of merged maintenance since 2020.",
+   "validation_passed": true,
+   "validation_errors": [],
+   "version": 2,
+   "trigger": "retask: now check the biggest fork",
+   "budget_used_at_render": 9,
+   "rendered_at": "2026-09-02T07:58:52+00:00"
+  }
+ ],
+ "messages": [
+  {
+   "role": "system",
+   "content": "You are The Repo Detective — a senior supply-chain security analyst.\nToday is 2026-09-02 (UTC). Judge freshness against this date.\n\nMISSION\nYour team is considering building on the GitHub repository request/request. Decide: adopt, adopt_with_conditions, or reject. You investigate with the tools provided; your verdict must rest exclusively on what those tools return in THIS investigation.\n\nEVIDENCE RULES (non-negotiable)\n- Prior knowledge may only generate hypotheses worth testing (\"I suspect this project had an incident — let's find it in the data\"). It must never appear as a finding.\n- Every factual claim in the verdict cites a step and quotes the tool output VERBATIM in data_point (it is substring-checked mechanically; paraphrases are rejected). To skip the middle of a long result write \"start ... end\" — every fragment must still be verbatim and in the order it appears.\n- What could not be checked (errors, rate limits, missing data) goes in unverified_notes — never fill gaps from memory.\n\nMETHOD\n- Work like an analyst, not a checklist: read what came back, form the next hypothesis, follow the interesting lead. Anomalies deserve pursuit — one person dominating the commits? Look into that person. Issues piling up unanswered? Check whether the community moved to a fork. A suspicious window in the timeline? Read the commits and their diffs.\n- Severity first. The decisive findings of a supply-chain investigation, in order: (1) malicious or hidden code ever shipped in the package (advisory records marked malicious, \"hidden functionality\", MAL-* identifiers); (2) the person who shipped it — and any single maintainer who holds most of the code; (3) a repository whose history does not match its package (created long after early versions were published, or reset). When one appears it BECOMES the investigation: which versions, when, who authored them (list_commits around those dates, get_commit on the culprit, get_user on the author), what happened afterwards, whether the same people still publish. Never conclude on a package with a malicious-code record without pursuing it to a named author and an outcome.\n- Batch independent lookups as multiple tool calls in ONE response — each response costs 1 budget call no matter how many tools it invokes. Never do serially what you can batch: profiling three contributors is ONE response with three get_user calls, not three responses.\n- Tool errors (404, empty repository, rate limit) are findings too: reason about them and adapt. File paths are case-sensitive — a 404 from get_file lists the directory so you can correct the name; one 404 never proves a file is missing.\n- Stop when more evidence would not change the verdict — most investigations should conclude well under budget. A clearly active, multi-maintainer project does not need its contributor list audited person by person; sample the decisive signals and conclude. Save depth for the anomaly that actually decides the verdict.\n\nBUDGET\n- Each of your responses consumes 1 call from a hard budget; the remaining count is appended to tool results. When it reaches zero the investigation stops.\n- If a decisive lead remains but the budget is nearly gone, call request_more_budget with your findings and a per-step plan — a human decides. Always keep enough budget to render your verdict.\n\nCASE NOTES ('reasoning' argument — required on every tool call)\nWrite like a seasoned detective's case file: one or two terse sentences — what the last finding was, and why this step is next. Skeptical, precise, dry wit welcome. A human reads these as the investigation log; make them worth reading. The voice:\n  \"68.8% of all commits belong to one person whose last commit is twelve years old. The project outlived its author — so who is actually home now?\"\n  \"An issue filed today claims the shipped dependency is vulnerable. Zero replies. Before believing a stranger, ask OSV.\"\n  \"Lockfile 404 — not a finding yet. Read the directory listing before calling anything 'missing'.\"\nNever write \"Check if X…\" seven times in a row; every note carries the finding that motivates the step. In a batch, each call gets its own note saying what THAT lookup is for — never one note pasted across all.\n\nFINISHING\nCall render_verdict with the decision, a short summary telling the story of the case, evidence items {claim, step_id, data_point(verbatim quote)}, conditions when the decision is adopt_with_conditions, and unverified_notes for the gaps. Keep it compact: 4-8 evidence items, each data_point a SHORT verbatim fragment (10-120 chars), not whole lines — long outputs get truncated and cost you a call. Failed validation is returned to you — fix the citations and render again.\nDecision calibration: adopt = no material risk beyond ordinary hygiene. adopt_with_conditions = a specific, verified risk the consumer can actually mitigate — name the mitigation. reject = a risk no condition mitigates: a maintainer who intentionally shipped malicious code, a deprecated or abandoned project with unfixed vulnerabilities, a history you cannot trust. \"Pin versions\" and \"monitor advisories\" are not conditions — they apply to every dependency.\n\nRespond ONLY with tool calls."
+  },
+  {
+   "role": "user",
+   "content": "INTAKE (plain-code pre-fetch — your clean starting point):\n{\n \"input_url\": \"request/request\",\n \"canonical_full_name\": \"request/request\",\n \"renamed_from\": null,\n \"owner\": \"request\",\n \"repo\": \"request\",\n \"description\": \"🏊🏾 Simplified HTTP request client.\",\n \"stars\": 25511,\n \"forks\": 3142,\n \"open_issues_and_prs\": 143,\n \"language\": \"JavaScript\",\n \"license\": \"Apache-2.0\",\n \"created_at\": \"2011-01-23T01:25:14Z\",\n \"pushed_at\": \"2024-08-14T00:09:41Z\",\n \"default_branch\": \"master\",\n \"archived\": false,\n \"disabled\": false,\n \"is_fork\": false,\n \"fork_parent\": null,\n \"size_kb\": 2290,\n \"last_release\": null,\n \"release_note\": \"no GitHub releases, but tags exist (latest tag: v2.88.1)\",\n \"top_contributors\": [\n  {\n   \"login\": \"mikeal\",\n   \"commits\": 623,\n   \"share_pct\": 35.2\n  },\n  {\n   \"login\": \"simov\",\n   \"commits\": 475,\n   \"share_pct\": 26.9\n  },\n  {\n   \"login\": \"nylen\",\n   \"commits\": 300,\n   \"share_pct\": 17.0\n  },\n  {\n   \"login\": \"greenkeeperio-bot\",\n   \"commits\": 49,\n   \"share_pct\": 2.8\n  },\n  {\n   \"login\": \"seanstrom\",\n   \"commits\": 46,\n   \"share_pct\": 2.6\n  },\n  {\n   \"login\": \"FredKSchott\",\n   \"commits\": 38,\n   \"share_pct\": 2.1\n  },\n  {\n   \"login\": \"isaacs\",\n   \"commits\": 32,\n   \"share_pct\": 1.8\n  },\n  {\n   \"login\": \"eiriksm\",\n   \"commits\": 21,\n   \"share_pct\": 1.2\n  },\n  {\n   \"login\": \"lalitkapoor\",\n   \"commits\": 15,\n   \"share_pct\": 0.8\n  },\n  {\n   \"login\": \"mscdex\",\n   \"commits\": 15,\n   \"share_pct\": 0.8\n  }\n ],\n \"contributors_note\": \"shares computed over the top 30 contributors' commit total\",\n \"warnings\": [],\n \"fetched_at\": \"2026-09-02T07:55:59+00:00\"\n}\n\nBegin the investigation."
+  },
+  {
+   "role": "assistant",
+   "content": null,
+   "tool_calls": [
+    {
+     "id": "call_WrvBMBhNWWi8TJmgZd1YlBG7",
+     "type": "function",
+     "function": {
+      "name": "get_repo",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"reasoning\": \"The intake shows an old, popular package with a 2024 push but no GitHub release. Establish the repository’s own status and any deprecation signal before treating activity as maintenance.\"}"
+     }
+    },
+    {
+     "id": "call_63YQU5Q2yq7JsVEkZ53bZGyo",
+     "type": "function",
+     "function": {
+      "name": "get_file",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"path\": \"README.md\", \"reasoning\": \"A package this old may announce retirement in its README. Read the maintainer’s notice rather than infer intent from timestamps.\"}"
+     }
+    },
+    {
+     "id": "call_VFOMY6xkEO5fJTHAmehEHlt0",
+     "type": "function",
+     "function": {
+      "name": "get_file",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"path\": \"package.json\", \"reasoning\": \"The intake identifies JavaScript but not the published identity or current version. The manifest anchors the OSV query to the actual package.\"}"
+     }
+    },
+    {
+     "id": "call_DKDTQjQAy909tlkGekIQfcGu",
+     "type": "function",
+     "function": {
+      "name": "osv_query",
+      "arguments": "{\"package\": \"request\", \"ecosystem\": \"npm\", \"reasoning\": \"This is a widely consumed npm package; query the vulnerability record directly, with special attention to malicious-code classifications.\"}"
+     }
+    },
+    {
+     "id": "call_4GI5nB2nRiPNId6TNFZ3RTFc",
+     "type": "function",
+     "function": {
+      "name": "get_security_advisories",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"reasoning\": \"Repository advisories can reveal maintainer-recognized incidents that a package-only query may not contextualize.\"}"
+     }
+    },
+    {
+     "id": "call_5ZVuMZlOqkggQKYAYB3yYPbG",
+     "type": "function",
+     "function": {
+      "name": "list_commits",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"per_page\": 30, \"reasoning\": \"The 2024 push could be a substantive maintenance event or mere metadata. Inspect the recent commit timeline and authorship.\"}"
+     }
+    },
+    {
+     "id": "call_TCGb2H2HNz170EyWiaE6zRFu",
+     "type": "function",
+     "function": {
+      "name": "list_issues",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"state\": \"open\", \"sort\": \"updated\", \"per_page\": 20, \"reasoning\": \"Open issue volume alone is noise; recent updated issues and replies show whether anyone is still tending the project.\"}"
+     }
+    },
+    {
+     "id": "call_cFWRqPlIpAmDHeD1rDBSke7h",
+     "type": "function",
+     "function": {
+      "name": "list_pulls",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"state\": \"all\", \"per_page\": 20, \"reasoning\": \"Merged PR recency is the clearest test of active stewardship, especially where commits may be automated.\"}"
+     }
+    }
+   ]
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_WrvBMBhNWWi8TJmgZd1YlBG7",
+   "name": "get_repo",
+   "content": "[step 1]\nrequest/request — 🏊🏾 Simplified HTTP request client.\nstars 25,511, forks 3,142, open issues+PRs 143\ncreated 2011-01-23, last push 2024-08-14, default branch master\nlicense: Apache-2.0, language: JavaScript, size 2,290 KB\narchived: False, disabled: False, fork: False"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_63YQU5Q2yq7JsVEkZ53bZGyo",
+   "name": "get_file",
+   "content": "[step 2]\nREADME.md @ default branch (46,374 chars):\n# Deprecated!\n\nAs of Feb 11th 2020, request is fully deprecated. No new changes are expected to land. In fact, none have landed for some time.\n\nFor more information about why request is deprecated and possible alternatives refer to\n[this issue](https://github.com/request/request/issues/3142).\n\n# Request - Simplified HTTP client\n\n[![npm package](https://nodei.co/npm/request.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/request/)\n\n[![Build status](https://img.shields.io/travis/request/request/master.svg?style=flat-square)](https://travis-ci.org/request/request)\n[![Coverage](https://img.shields.io/codecov/c/github/request/request.svg?style=flat-square)](https://codecov.io/github/request/request?branch=master)\n[![Coverage](https://img.shields.io/coveralls/request/request.svg?style=flat-square)](https://coveralls.io/r/request/request)\n[![Dependency Status](https://img.shields.io/david/request/request.svg?style=flat-square)](https://david-dm.org/request/request)\n[![Known Vulnerabilities](https://snyk.io/test/npm/request/badge.svg?style=flat-square)](https://snyk.io/test/npm/request)\n[![Gitter](https://img.shields.io/badge/gitter-join_chat-blue.svg?style=flat-square)](https://gitter.im/request/request?utm_source=badge)\n\n\n## Super simple to use\n\nRequest is designed to be the simplest way possible to make http calls. It supports HTTPS and follows redirects by default.\n\n```js\nconst request = require('request');\nrequest('http://www.google.com', function (error, response, body) {\n  console.error('error:', error); // Print the error if one occurred\n  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received\n  console.log('body:', body); // Print the HTML for the Google homepage.\n});\n```\n\n\n## Table of contents\n\n- [Streaming](#streaming)\n- [Promises & Async/Await](#promises--asyncawait)\n- [Forms](#forms)\n- [HTTP Authentication](#http-authentication)\n- [Custom HTTP Headers](#custom-http-headers)\n- [OAuth Signing](#oauth-signing)\n- [Proxies](#proxies)\n- [Unix Domain Sockets](#unix-domain-sockets)\n- [TLS/SSL Protocol](#tlsssl-protocol)\n- [Support for HAR 1.2](#support-for-har-12)\n- [**All Available Options**](#requestoptions-callback)\n\nRequest also offers [convenience methods](#convenience-methods) like\n`request.defaults` and `request.post`, and there are\nlots of [usage examples](#examples) and several\n[debugging techniques](#debugging).\n\n\n---\n\n\n## Streaming\n\nYou can stream any response to a file stream.\n\n```js\nrequest('http://google.com/doodle.png').pipe(fs.createWriteStream('doodle.png'))\n```\n\nYou can also stream a file to a PUT or POST request. This method will also check the file extension against a mapping of file extensions to content-types (in this case `application/json`) and use the proper `content-type` in the PUT request (if the headers don’t already provide one).\n\n```js\nfs.createReadStream('file.json').pipe(request.put('http://mysite.com/obj.json'))\n```\n\nRequest can also `pipe` to itself. When doing so, `content-type` and `content-length` are preserved in the PUT headers.\n\n```js\nrequest.get('http://google.com/img.png').pipe(request.put('http://mysite.com/img.png'))\n```\n\nRequest emits a \"response\" event when a response is received. The `response` argument will be an instance of [http.IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage).\n\n```js\nrequest\n  .get('http://google.com/img.png')\n  .on('response', function(response) {\n    console.log(response.statusCode) // 200\n    console.log(response.headers['content-type']) // 'image/png'\n  })\n  .pipe(request.put('http://mysite.com/img.png'))\n```\n\nTo easily handle errors when streaming requests, listen to the `error` event before piping:\n\n```js\nrequest\n  .get('http://mysite.com/doodle.png')\n  .on('error', function(err) {\n    console.error(err)\n  })\n  .pipe(fs.createWriteStream('doodle.png'))\n```\n\nNow let’s get fancy.\n\n```js\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    if (req.method === 'PUT') {\n      req.pipe(request.put('http://mysite.com/doodle.png'))\n    } else if (req.method === 'GET' || req.method === 'HEAD') {\n      request.get('http://mysite.com/doodle.png').pipe(resp)\n    }\n  }\n})\n```\n\nYou can also `pipe()` from `http.ServerRequest` instances, as well as to `http.ServerResponse` instances. The HTTP method, headers, and entity-body data will be sent. Which means that, if you don't really care about security, you can do:\n\n```js\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    const x = request('http://mysite.com/doodle.png')\n    req.pipe(x)\n    x.pipe(resp)\n  }\n})\n```\n\nAnd since `pipe()` returns the destination stream in ≥ Node 0.5.x you can do one line proxying. :)\n\n```js\nreq.pipe(request('http://mysite.com/doodle.png')).pipe(resp)\n```\n\nAlso, none of this new functionality conflicts with requests previous features, it just expands them.\n\n```js\nconst r = request.defaults({'proxy':'http://localproxy.com'})\n\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    r.get('http://google.com/doodle.png').pipe(resp)\n  }\n})\n```\n\nYou can still use intermediate proxies, the requests will still follow HTTP forwards, etc.\n\n[back to top](#table-of-contents)\n\n\n---\n\n\n## Promises & Async/Await\n\n`request` supports both streaming and callback interfaces natively. If you'd like `request` to return a Promise instead, you can use an alternative interface wrapper for `request`. These wrappers can be useful if you prefer to work with Promises, or if you'd like to use `async`/`await` in ES2017.\n\nSeveral alternative interfaces are provided by the request team, including:\n- [`request-promise`](https://github.com/request/request-promise) (uses [Bluebird](https://github.com/petkaantonov/bluebird) Promises)\n- [`request-promise-native`](https://github.com/request/request-promise-native) (uses native Promises)\n- [`request-promise-any`](https://github.com/request/request\n...[truncated — 40,374 more chars]"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_VFOMY6xkEO5fJTHAmehEHlt0",
+   "name": "get_file",
+   "content": "[step 3]\npackage.json @ default branch (1,938 chars):\n{\n \"name\": \"request\",\n \"description\": \"Simplified HTTP request client.\",\n \"keywords\": [\n  \"http\",\n  \"simple\",\n  \"util\",\n  \"utility\"\n ],\n \"version\": \"2.88.1\",\n \"author\": \"Mikeal Rogers <mikeal.rogers@gmail.com>\",\n \"repository\": {\n  \"type\": \"git\",\n  \"url\": \"https://github.com/request/request.git\"\n },\n \"bugs\": {\n  \"url\": \"http://github.com/request/request/issues\"\n },\n \"license\": \"Apache-2.0\",\n \"engines\": {\n  \"node\": \">= 6\"\n },\n \"main\": \"index.js\",\n \"files\": [\n  \"lib/\",\n  \"index.js\",\n  \"request.js\"\n ],\n \"dependencies\": {\n  \"aws-sign2\": \"~0.7.0\",\n  \"aws4\": \"^1.8.0\",\n  \"caseless\": \"~0.12.0\",\n  \"combined-stream\": \"~1.0.6\",\n  \"extend\": \"~3.0.2\",\n  \"forever-agent\": \"~0.6.1\",\n  \"form-data\": \"~2.3.2\",\n  \"har-validator\": \"~5.1.3\",\n  \"http-signature\": \"~1.2.0\",\n  \"is-typedarray\": \"~1.0.0\",\n  \"isstream\": \"~0.1.2\",\n  \"json-stringify-safe\": \"~5.0.1\",\n  \"mime-types\": \"~2.1.19\",\n  \"oauth-sign\": \"~0.9.0\",\n  \"performance-now\": \"^2.1.0\",\n  \"qs\": \"~6.5.2\",\n  \"safe-buffer\": \"^5.1.2\",\n  \"tough-cookie\": \"~2.5.0\",\n  \"tunnel-agent\": \"^0.6.0\",\n  \"uuid\": \"^3.3.2\"\n },\n \"scripts\": {\n  \"test\": \"npm run lint && npm run test-ci && npm run test-browser\",\n  \"test-ci\": \"taper tests/test-*.js\",\n  \"test-cov\": \"nyc --reporter=lcov tape tests/test-*.js\",\n  \"test-browser\": \"node tests/browser/start.js\",\n  \"lint\": \"standard\"\n },\n \"devDependencies\": {\n  \"bluebird\": \"^3.2.1\",\n  \"browserify\": \"^13.0.1\",\n  \"browserify-istanbul\": \"^2.0.0\",\n  \"buffer-equal\": \"^1.0.0\",\n  \"codecov\": \"^3.0.4\",\n  \"coveralls\": \"^3.0.2\",\n  \"function-bind\": \"^1.0.2\",\n  \"karma\": \"^3.0.0\",\n  \"karma-browserify\": \"^5.0.1\",\n  \"karma-cli\": \"^1.0.0\",\n  \"karma-coverage\": \"^1.0.0\",\n  \"karma-phantomjs-launcher\": \"^1.0.0\",\n  \"karma-tap\": \"^3.0.1\",\n  \"nyc\": \"^14.1.1\",\n  \"phantomjs-prebuilt\": \"^2.1.3\",\n  \"rimraf\": \"^2.2.8\",\n  \"server-destroy\": \"^1.0.1\",\n  \"standard\": \"^9.0.0\",\n  \"tape\": \"^4.6.0\",\n  \"taper\": \"^0.5.0\"\n },\n \"greenkeeper\": {\n  \"ignore\": [\n   \"hawk\",\n   \"har-validator\"\n  ]\n }\n}"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_DKDTQjQAy909tlkGekIQfcGu",
+   "name": "osv_query",
+   "content": "[step 4]\nOSV: 2 known vulnerabilities for npm package 'request':\n- GHSA-7xfp-9c55-5vqj (CVE-2017-16026) [CVSS3 CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N] published 2018-11-09\n  Remote Memory Exposure in request\n  introduced 2.49.0, fixed 2.68.0; introduced 2.2.6, fixed 2.68.0\n- GHSA-p8p7-x288-28g6 (CVE-2023-28155) [CVSS3 CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N] published 2023-03-16\n  Server-Side Request Forgery in Request\n  introduced 0, no fix listed; introduced 0, fixed 3.0.0"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_4GI5nB2nRiPNId6TNFZ3RTFc",
+   "name": "get_security_advisories",
+   "content": "[step 5]\nno repository-published security advisories. NOTE: maintainers often never publish repo-level advisories even when CVEs exist — cross-check with osv_query using the package name from the manifest (e.g. package.json)."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_5ZVuMZlOqkggQKYAYB3yYPbG",
+   "name": "list_commits",
+   "content": "[step 6]\n30 commits (no filters, newest first):\n- 3c0cddc7c8 [2020-02-11] gr2m: README: typo in deprecation message (#3268)\n- aded7e4f8e [2020-02-11] mikeal: doc: note full deprecation (#3267)\n- 212570b697 [2019-05-29] andresroberto: Use nyc instead of istanbul (#3169)\n- b3a218dc7b [2019-04-04] odykyi: Update README.md (#3023)\n- b0e9abb2f2 [2019-04-01] shige: docs: :memo: Updated the Change Log for v2.88.0 (2018/08/10) (#3008)\n- 7195b5064a [2019-02-26] jaredsuttles: docs: adjust readme timeout argument description to be clearer (#3115)\n- a9557c9e7d [2019-02-15] flotwig: Update outdated link in comment (#3109)\n- df346d8531 [2018-12-24] reconbot: fix: Clear timeout on `#abort()` (#3090)\n- 670b563067 [2018-12-23] grabus: chore: Update to tough-cookie 2.5.0 (#3089)\n- be7882b0bb [2018-12-13] rickyes: optimize:do unnecessary processing when changing options to null (#2972)\n- e81c9b1dad [2018-12-12] Alvin Smith: fix: expression minor bugs (#3074)\n- b3926a3a57 [2018-12-01] reconbot: Revert \"Workaround for GitHub issue #2807 (#2808)\" (#3075)\n- 2bc3cc4c99 [2018-12-01] pgonzal: Workaround for GitHub issue #2807 (#2808)\n- 167065e235 [2018-11-24] reconbot: chore: ensure piped body is exactly the same (#3064)\n- 81b171b5f7 [2018-11-24] EmmanuelDemey: fix: use const instead of var in the README (#3046)\n- 5ee89063cd [2018-11-23] lifeisfoo: Documented response.caseless.get() (#2995)\n- 39e3d50709 [2018-11-23] reconbot: add bug label to stale.yml\n- 2737161f36 [2018-11-23] RolfKoenders: Verify that body is not empty (#2701)\n- 297e39b158 [2018-11-23] odedpeer: Update the documentation of timeout to reflect it controls timeout of socket inactivity (#2728)\n- 641527de7a [2018-11-23] Huachao: Update cookie store API link (#2750)\n- 8d18919753 [2018-11-23] riverspirit: Update README to mention util.promisify() (#2824)\n- 2031447261 [2018-11-23] Maciek416: Fix link to HAR 1.2 Section Anchor (#2674)\n- e476ce5762 [2018-11-23] deed02392: Update README.md (#2644)\n- 418623cf6d [2018-08-15] jmannanc: Drop support for Node.js v4 (Fix #2917)\n- 1befd90b4b [2018-11-22] reconbot: fix: SSL Certs (#3062)\n- 26d6cceca1 [2018-11-22] reconbot: Merge pull request #3061 from request/reconbot/neverstale\n- 48bdabd9de [2018-11-22] reconbot: Add neverstale label to stalebot config\n- cdca238d7f [2018-11-22] reconbot: Merge pull request #3060 from request/reconbot/stale-issues\n- 7c42a7f880 [2018-11-22] reconbot: chore: Add probot-stale\n- bf3e2651a0 [2018-11-21] chancehudson: fix #3054, Bump har-validator version to 5.1.3 (#3055)\n(showing the 30 most recent — there may be more; narrow with since/until/author)"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_TCGb2H2HNz170EyWiaE6zRFu",
+   "name": "list_issues",
+   "content": "[step 7]\n20 open issues, sorted by updated (2 PRs excluded from the issues feed):\n- #3752 [open] (5 comments, opened 2025-09-12) Announcing dropin-request: A Drop-In Replacement for request\n- #3143 [open] (106 comments, opened 2019-04-01) Alternative libraries to request\n- #3480 [open] (2 comments, opened 2023-12-29) Docs on migrating from request to fetch?\n- #3759 [open] (0 comments, opened 2026-04-13) naraa\n- #3758 [open] (0 comments, opened 2026-03-11) Access to raise new issue for (Allegis Use Only) Contractor Onboarding/Extension Request.\n- #3442 [open] (8 comments, opened 2023-03-08) CVE-2023-28155 Request allows a bypass of SSRF mitigations via an attacker-controller serv\n- #3751 [open] (2 comments, opened 2025-08-15) form-data CVE-2025-7783\n- #3756 [open] (0 comments, opened 2025-12-08) call time\n- #3755 [open] (1 comments, opened 2025-11-10) CVE-2023-26136 reported for dependency module tough-cookie\n- #3754 [open] (0 comments, opened 2025-10-09) Request GitHub KYC\n- #3753 [open] (0 comments, opened 2025-09-20) Raraaahh\n- #3748 [open] (0 comments, opened 2025-06-16) Unhandled error when attempting to convert a very long string to a different format\n- #3147 [open] (33 comments, opened 2019-04-03) Post Request ok with postman but failed using code in python\n- #3620 [open] (1 comments, opened 2025-03-10) request/request-promise Got Hit By Spam Comments As Well\n- #3142 [open] (437 comments, opened 2019-03-30) Request’s Past, Present and Future\n- #3507 [open] (0 comments, opened 2025-01-28) Fodboldbane\n- #2366 [open] (18 comments, opened 2016-09-05) TypeError: source.on is not a function\n- #3505 [open] (0 comments, opened 2024-12-19) Error: write EPROTO 22360:error:1408F10B:SSL routines:ssl3_get_record:wrong version ,will \n- #3503 [open] (1 comments, opened 2024-12-09) 3142\n- #3500 [open] (0 comments, opened 2024-09-21) Unable to init from given binary data.\nsummary: 9 of 20 listed issues have 0 comments and no assignee; oldest such issue: #3500 from 2024-09-21"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_cFWRqPlIpAmDHeD1rDBSke7h",
+   "name": "list_pulls",
+   "content": "[step 8]\n20 all PRs (most recently updated first):\n- #3757 [closed] Revise security policy and vulnerability reporting (by Loulou823)\n- #3268 [merged 2020-02-11] README: typo in deprecation message (by gr2m)\n- #3749 [closed] feat: add support for SOCKS proxy (by appurva21)\n- #3508 [closed] Added SASVA suggested fixes for CVE-2023-28155 (by damithn)\n- #3491 [closed] Http signature (by sreenijakurremula)\n- #3506 [closed] Create SECURITY.md (by kingson8210)\n- #3504 [closed] feat: 更新依赖库版本 (by livehigh)\n- #3501 [closed] Get types in house (by CubikNeRubik)\n- #3461 [open] Update package.json (by ksreejithnair)\n- #3498 [closed] Node 20 upgrade (by jennifer-shehane)\n- #3474 [closed] log buffers over limit (by BrendanMeintjes)\n- #3494 [closed] Protocol version auto unhandled error (by parthverma1)\n- #3492 [closed] Prevent \"ERR_HTTP2_SOCKET_UNBOUND\" from bubbling up (by parthverma1)\n- #2648 [closed] Use Doctoc to maintain README \"Table of contents\"! (by PeterDaveHello)\n- #3395 [open] Update http-signature to major version 1.3 (by mylesgordon)\n- #3331 [closed] Include Permanent Redirect (by cwrlys)\n- #3449 [open] Chore/testing GitHub workflow (by dev-sharma-08)\n- #3473 [closed] log buffers over limit (by BrendanMeintjes)\n- #3472 [closed] build: bump tough-cookie dependency (by leroyguillaume)\n- #3425 [open] -- upgrade dependencies (by pavhov)\nsummary: 1 of 20 listed PRs were merged; most recent merge 2020-02-11\n\n[budget: 1/30 LLM calls used — 29 remaining]"
+  },
+  {
+   "role": "assistant",
+   "content": null,
+   "tool_calls": [
+    {
+     "id": "call_uBioTRguiV1dahQ6OBTtTFAV",
+     "type": "function",
+     "function": {
+      "name": "render_verdict",
+      "arguments": "{\"decision\":\"reject\",\"confidence\":\"high\",\"reasoning\":\"The repository’s own README declares retirement, OSV records an unfixed SSRF vulnerability, and no PR has merged since the retirement notice. This is abandonment with a known unresolved security defect, not ordinary dependency hygiene.\",\"summary\":\"Reject request/request: its maintainers explicitly deprecated it in February 2020 and state that no new changes are expected. OSV records an SSRF vulnerability with no fix listed, while the PR history shows the last merge was in 2020; the package is therefore not a maintainable foundation for new work.\",\"evidence\":[{\"claim\":\"The project is explicitly deprecated and says no new changes are expected.\",\"step_id\":2,\"data_point\":\"# Deprecated!\\n\\nAs of Feb 11th 2020, request is fully deprecated. No new changes are expected to land.\"},{\"claim\":\"The package manifest identifies the published npm package as request version 2.88.1.\",\"step_id\":3,\"data_point\":\"\\\"name\\\": \\\"request\\\" ... \\\"version\\\": \\\"2.88.1\\\"\"},{\"claim\":\"OSV reports an SSRF vulnerability for request with no fix listed.\",\"step_id\":4,\"data_point\":\"Server-Side Request Forgery in Request\\n  introduced 0, no fix listed\"},{\"claim\":\"The recent commit history’s newest commit is the 2020 deprecation documentation change.\",\"step_id\":6,\"data_point\":\"3c0cddc7c8 [2020-02-11] gr2m: README: typo in deprecation message (#3268)\"},{\"claim\":\"The pull-request history reports that the most recent merge was in 2020.\",\"step_id\":8,\"data_point\":\"summary: 1 of 20 listed PRs were merged; most recent merge 2020-02-11\"}],\"unverified_notes\":[\"No malicious-code advisory was returned by the OSV package query; this investigation did not independently inspect npm registry publisher identities or package tarballs.\"]}"
+     }
+    }
+   ]
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_uBioTRguiV1dahQ6OBTtTFAV",
+   "name": "render_verdict",
+   "content": "[senior review] Not accepted yet — you are closing after 2 call(s) with 28 of 30 unused. Before a verdict this early: list every anomaly your case notes raised (malicious-code or hidden-functionality records, a dominant or vanished maintainer, a repository history that doesn't match the package, unanswered security reports) and say whether each was pursued to a named author and outcome. Pursue the unpursued ones now — batch the lookups — then render again. If there is truly nothing left to pursue, render again and say so in the summary.\n\n[budget: 2/30 LLM calls used — 28 remaining]"
+  },
+  {
+   "role": "assistant",
+   "content": null,
+   "tool_calls": [
+    {
+     "id": "call_IB74IE8joK9EL1PEFFvj2Abt",
+     "type": "function",
+     "function": {
+      "name": "get_issue",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"number\": 3442, \"reasoning\": \"OSV identifies an unfixed SSRF and the issue list shows a dedicated report. Read the report and discussion to establish whether maintainers addressed it or left it unresolved.\"}"
+     }
+    },
+    {
+     "id": "call_kN8gdRFpzB2exsXKUUkbt7wY",
+     "type": "function",
+     "function": {
+      "name": "get_issue",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"number\": 3142, \"reasoning\": \"The README directs users to this retirement discussion. Read the maintainer’s stated outcome and any migration guidance at the source.\"}"
+     }
+    },
+    {
+     "id": "call_hjzD98AQMbWqb3fDxuZkPwVA",
+     "type": "function",
+     "function": {
+      "name": "get_user",
+      "arguments": "{\"login\": \"mikeal\", \"reasoning\": \"Mikeal is named as package author and is among the largest historical contributors. Profile the named maintainer behind the package’s stewardship.\"}"
+     }
+    },
+    {
+     "id": "call_wgBeCfnhQfazGi929vQpKBd2",
+     "type": "function",
+     "function": {
+      "name": "get_user",
+      "arguments": "{\"login\": \"simov\", \"reasoning\": \"Simov accounts for 26.9% of top-contributor commits, a material concentration. Identify whether this historical maintainer remains a plausible steward.\"}"
+     }
+    },
+    {
+     "id": "call_cf338jTLMBq3jwzOjoXrpOpx",
+     "type": "function",
+     "function": {
+      "name": "get_user",
+      "arguments": "{\"login\": \"nylen\", \"reasoning\": \"Nylen accounts for 17.0% of top-contributor commits. Profile this third major historical contributor to test whether maintenance was distributed or vanished.\"}"
+     }
+    },
+    {
+     "id": "call_DX1PyfNryKslmdQoFDOg8BsK",
+     "type": "function",
+     "function": {
+      "name": "get_user_events",
+      "arguments": "{\"login\": \"mikeal\", \"reasoning\": \"The repository is deprecated; Mikeal’s current public activity distinguishes a vanished account from an active person who simply no longer maintains this package.\"}"
+     }
+    },
+    {
+     "id": "call_urPmOtV0FFag3i3dZlSuF4tX",
+     "type": "function",
+     "function": {
+      "name": "get_user_events",
+      "arguments": "{\"login\": \"simov\", \"reasoning\": \"Simov is a major historical contributor. Recent public activity helps determine whether the project lacks a current steward rather than merely lacking commits.\"}"
+     }
+    },
+    {
+     "id": "call_kbqNwhKb6TPCdqXHONQH4Qfg",
+     "type": "function",
+     "function": {
+      "name": "get_user_events",
+      "arguments": "{\"login\": \"nylen\", \"reasoning\": \"Nylen is a major historical contributor. Recent public activity helps determine whether the project lacks a current steward rather than merely lacking commits.\"}"
+     }
+    },
+    {
+     "id": "call_BiJ51bkJm5VvnxT1vAEt8FKy",
+     "type": "function",
+     "function": {
+      "name": "list_commits",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"since\": \"2019-01-01\", \"until\": \"2020-03-01\", \"author\": \"mikeal\", \"per_page\": 30, \"reasoning\": \"The deprecation window is decisive. Retrieve Mikeal’s commits around it to identify the named author of the retirement action and its exact scope.\"}"
+     }
+    },
+    {
+     "id": "call_W34xhz4ZvKZEGIxk8LNZr6rx",
+     "type": "function",
+     "function": {
+      "name": "list_forks",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"reasoning\": \"A deprecated project can still be viable only if its community moved to a maintained fork. Inspect the leading forks and their push dates.\"}"
+     }
+    }
+   ]
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_IB74IE8joK9EL1PEFFvj2Abt",
+   "name": "get_issue",
+   "content": "[step 10]\nissue #3442: CVE-2023-28155 Request allows a bypass of SSRF mitigations via an attacker-controller server that does a cross-protocol redirect\nstate: open, opened 2023-03-08 by SzymonDrosdzol, 8 comments, labels: none\nbody: ### Summary\r\nI am a security researcher at [Doyensec](https://doyensec.com/).\r\n\r\nDuring a security engagement I have identified a security vulnerability in the Request library.\r\nIn a spirit of a Responsible Disclosure we have tried to contact the maintainer directly on 12/02/2022 and 01/18/2023 via [email](mikeal.rogers@gmail.com), but we have received no answer.\r\n\r\nPlease provide a communication channel that would allow us to share the technical details and the proposed fix, otherwise we will be forced to disclose the vulnerability publicly.\r\n\r\nYou can contact me via email: szymon@doyensec.com\r\n\n--- comment by ReduxMPX [2023-03-10]: Not my conversation to be involving myself in, but why would you be forced to disclose the vulnerability publicly if they don't respond?\n--- comment by ikkisoft [2023-03-13]: Please refer to https://googleprojectzero.blogspot.com/p/vulnerability-disclosure-faq.html \"Why are disclosure deadlines necessary?\" if you're not familiar with standard vulnerability disclosure practices\n--- comment by SzymonDrosdzol [2023-03-16]: # Summary\r\n\r\nA Server Side Request Forgery (SSRF) attack describes the ability of an attacker to create network connections from a vulnerable web application to the internal network and other Internet hosts. Frequently, a SSRF vulnerability is used to attack internal services placed behind a firewall and not directly accessible from the Internet.\r\n\r\nThe Request library can be leveraged to initiate\n--- comment by rgnova [2023-03-17]: I imagine this is where the problem lies?:\r\nhttps://github.com/request/request/blame/3c0cddc7c8eb60b470e9519da85896ed7ee0081e/lib/redirect.js#L111\r\n\r\nI'm having a hard time deciding if this should be considered a requestjs \"vuln\" or if its more of a \"bug\". It looks like requestjs was always vulnerable to SSRFs, and `ssrf-req-filter` is what fixed the problem. But given how requestjs is written, th\n--- comment by ronjouch [2023-03-21]: Tangential call for help, and question addressed to subscribers of this issue: is it clear to you how to get SSRF protection in recently-introdued-in-node18 `fetch` like we do in axios/request with a plugin like ssrf-req-filter? (Putting this CVE aside, of course).\r\n\r\nIt's not to me. Community implementation `node-fetch` has support for something similar, but I can't find anything in the new imple\n...[3 more comments not shown]"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_kN8gdRFpzB2exsXKUUkbt7wY",
+   "name": "get_issue",
+   "content": "[step 11]\nissue #3142: Request’s Past, Present and Future\nstate: open, opened 2019-03-30 by mikeal, 437 comments, labels: neverstale\nbody: Before I go into the details and reasoning I’ll get straight to the point. **The most valuable thing `request` can do for the JavaScript ecosystem is to go into maintenance mode and stop considering new features or major releases.**\r\n\r\nApologies in advance to the other committers on `request` that have been doing their best to improve it, but it’s for the best.\r\n\r\n## 2009\r\n\r\nThe first version of `request` was one of the first modules ever created for the Node.js ecosystem. The earliest versions were written to APIs that pre-date the standard callback interface, streams, node_modules and npm. For the first few years, `request` and Node.js evolved together, each learning from the other. As Node.js improved and migrated core interfaces so did request. As request adopted changes to the core http library and streams it also informed improvements like the `pipe` event (which enabled `request`’s one line proxy) and one of Core http’s many re-writes (the one I had to write).\r\n\r\n## npm\r\n\r\n`request` was one of the first modules added to the npm registry. As npm grew so did dependence on `request`. Even now, when `npm` is used far more for front-end than back-end work, `request` remains one of the most depended on modules in the registry. As I write this, 41K modules depend on request and it is downloaded 14 million times a week.\r\n\r\nThe place `request` has in the Node.js ecosystem is no longer one of an innovator but of an incumbent. If you Google for how to do something with HTTP in No\n--- comment by reconbot [2019-03-30]: I fully support this, I think a warning message and/or deprecating new releases is in order.\r\n\r\nAs for the change in process and guidelines, it makes my job a lot easier 👌\n--- comment by simov [2019-03-31]: Very well said @mikeal. I'm pinning this issue to gain more visibility.\n--- comment by reconbot [2019-03-31]: Things we might do - please discuss and volunteer!\r\n- [ ] update readme with current state of project\r\n- [ ] update ci publishing pipeline @mikeal \r\n- [ ] provide a doc with some guidance on `request` alternatives https://github.com/request/request/issues/3143\r\n- [ ] add a warning message on install of the package to use another package and reference the doc\r\n- [ ] pick a date to stop support (I v\n--- comment by analog-nico [2019-04-01]: It makes a lot of sense! I will slowly adopt this policy for the `request-promise` family as well. Cheers to your important contributions to the node ecosystem!\n--- comment by bajtos [2019-04-02]: > deprecate the latest npm package and auto deprecate them on publish\r\n\r\nPlease be careful about deprecation. As Mikael wrote above, there are 41K modules depending on `request`. Many of these modules are useful in the current state and work well for their users, but their maintainers may not have time to rework those modules to use something else than `request`. By deprecating `request` at instal\n...[432 more comments not shown]"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_hjzD98AQMbWqb3fDxuZkPwVA",
+   "name": "get_user",
+   "content": "[step 12]\nmikeal (User) — Mikeal Rogers\naccount created 2008-02-21, 509 public repos, 5,099 followers\nlocation: San Francisco\nbio: Hacker of a certain age."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_wgBeCfnhQfazGi929vQpKBd2",
+   "name": "get_user",
+   "content": "[step 13]\nsimov (User) — simo\naccount created 2012-04-30, 131 public repos, 496 followers\ncompany: Outofindex\nlocation: EET/EEST\nbio: (λ (λ (λ (λ (λ (⌐■_■))))))"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_cf338jTLMBq3jwzOjoXrpOpx",
+   "name": "get_user",
+   "content": "[step 14]\nnylen (User) — James Nylen\naccount created 2010-03-20, 216 public repos, 230 followers\nlocation: UTC-5 or -6 maybe\nbio: I like to build things."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_DX1PyfNryKslmdQoFDOg8BsK",
+   "name": "get_user_events",
+   "content": "[step 15]\nno public activity for mikeal in GitHub's recent-events window. NOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_urPmOtV0FFag3i3dZlSuF4tX",
+   "name": "get_user_events",
+   "content": "[step 16]\nno public activity for simov in GitHub's recent-events window. NOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_kbqNwhKb6TPCdqXHONQH4Qfg",
+   "name": "get_user_events",
+   "content": "[step 17]\nno public activity for nylen in GitHub's recent-events window. NOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_BiJ51bkJm5VvnxT1vAEt8FKy",
+   "name": "list_commits",
+   "content": "[step 18]\n1 commits (since=2019-01-01, until=2020-03-01, author=mikeal, newest first):\n- aded7e4f8e [2020-02-11] mikeal: doc: note full deprecation (#3267)"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_W34xhz4ZvKZEGIxk8LNZr6rx",
+   "name": "list_forks",
+   "content": "[step 19]\ntop 10 forks by stars (is the community maintaining one of these instead?):\n- postmanlabs/postman-request: 155 stars, last push 2026-07-21\n- linus/request: 77 stars, last push 2011-02-14\n- cypress-io/request: 14 stars, last push 2026-08-26\n- isaacs/request: 8 stars, last push 2014-09-08\n- Flipboard/request: 6 stars, last push 2015-10-06\n- bcherry/request: 3 stars, last push 2020-08-12\n- codemedic213515/request: 3 stars, last push 2019-11-14\n- SoltanHuseynov/request: 2 stars, last push 2021-04-01\n- supasate/request: 2 stars, last push 2017-09-02\n- mcanthony/request: 2 stars, last push 2015-11-03\n(point any tool at a fork via its owner/repo to investigate it)\n\n[budget: 3/30 LLM calls used — 27 remaining]"
+  },
+  {
+   "role": "assistant",
+   "content": null,
+   "tool_calls": [
+    {
+     "id": "call_cnKPj1uUM8EBspocEQLkTQQK",
+     "type": "function",
+     "function": {
+      "name": "render_verdict",
+      "arguments": "{\"decision\":\"reject\",\"confidence\":\"high\",\"reasoning\":\"The initially decisive abandonment finding has now been pursued to its named author, the unresolved security report, and the community-fork question. Mikeal authored the retirement action; the SSRF reporter records unanswered direct disclosure attempts; and the original package remains explicitly retired with no post-2020 merged maintenance.\",\"summary\":\"Reject request/request. Mikeal Rogers authored the 2020 full-deprecation commit after publicly proposing maintenance mode; the README says no new changes are expected. A security researcher’s 2023 SSRF report says direct emails to the maintainer received no answer, and OSV lists the SSRF with no fix. Although active forks exist, the investigation did not establish any as a drop-in, security-maintained successor to the published request package; the original package is abandoned with an unresolved vulnerability.\",\"evidence\":[{\"claim\":\"The project explicitly declares itself deprecated and says no new changes are expected.\",\"step_id\":2,\"data_point\":\"# Deprecated!\\n\\nAs of Feb 11th 2020, request is fully deprecated. No new changes are expected to land.\"},{\"claim\":\"The published package is request version 2.88.1.\",\"step_id\":3,\"data_point\":\"\\\"name\\\": \\\"request\\\" ... \\\"version\\\": \\\"2.88.1\\\"\"},{\"claim\":\"OSV records an SSRF vulnerability with no fix listed.\",\"step_id\":4,\"data_point\":\"Server-Side Request Forgery in Request\\n  introduced 0, no fix listed\"},{\"claim\":\"The named package author, Mikeal, authored the full-deprecation commit in the retirement window.\",\"step_id\":18,\"data_point\":\"aded7e4f8e [2020-02-11] mikeal: doc: note full deprecation (#3267)\"},{\"claim\":\"Mikeal’s retirement issue states that request should enter maintenance mode and stop new features or major releases.\",\"step_id\":11,\"data_point\":\"The most valuable thing `request` can do for the JavaScript ecosystem is to go into maintenance mode and stop considering new features or major releases.\"},{\"claim\":\"The SSRF reporter states that direct disclosure emails to the maintainer received no answer.\",\"step_id\":10,\"data_point\":\"we have tried to contact the maintainer directly on 12/02/2022 and 01/18/2023 via [email](mikeal.rogers@gmail.com), but we have received no answer.\"},{\"claim\":\"The PR history reports no merged PR after February 2020.\",\"step_id\":8,\"data_point\":\"summary: 1 of 20 listed PRs were merged; most recent merge 2020-02-11\"},{\"claim\":\"Active forks exist, but this only establishes fork activity, not a vetted replacement for the original package.\",\"step_id\":19,\"data_point\":\"postmanlabs/postman-request: 155 stars, last push 2026-07-21\"}],\"unverified_notes\":[\"No malicious-code or hidden-functionality record was returned by the OSV package query.\",\"GitHub recent-events lookups returned no public activity for mikeal, simov, or nylen, but the tool notes that this window is limited to roughly 90 days and does not prove long-term inactivity.\",\"Active forks were identified but not investigated as replacement candidates because the decision concerns the original request/request package.\"]}"
+     }
+    }
+   ]
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_cnKPj1uUM8EBspocEQLkTQQK",
+   "name": "render_verdict",
+   "content": "Verdict recorded (v1).\n\n[budget: 4/30 LLM calls used — 26 remaining]"
+  },
+  {
+   "role": "user",
+   "content": "[re-task from the tech lead] now check the biggest fork\nContinue the investigation. If the new evidence warrants it, update the verdict with render_verdict (fill changed_from_previous); otherwise render it again unchanged, stating why the evidence didn't move it."
+  },
+  {
+   "role": "assistant",
+   "content": null,
+   "tool_calls": [
+    {
+     "id": "call_o7DZkt9snUfEnZyRmXOOz2Nv",
+     "type": "function",
+     "function": {
+      "name": "get_repo",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"reasoning\": \"The leading fork has 155 stars and a 2026 push, so it is the only plausible successor lead. Establish its ownership, archival state, and maintenance timestamps.\"}"
+     }
+    },
+    {
+     "id": "call_9kgYSWDas5NebJAdUzBGUbrP",
+     "type": "function",
+     "function": {
+      "name": "get_file",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"path\": \"README.md\", \"reasoning\": \"A recent push does not prove a supported replacement. Read the fork’s own README for purpose, deprecation, and adoption guidance.\"}"
+     }
+    },
+    {
+     "id": "call_nOIRUcHPkOsv4OT3MYMDpyx7",
+     "type": "function",
+     "function": {
+      "name": "get_file",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"path\": \"package.json\", \"reasoning\": \"The fork may publish under a different npm name and version. Its manifest determines whether consumers can practically adopt it and supports advisory lookup.\"}"
+     }
+    },
+    {
+     "id": "call_kWwC1rXRj9GWIA7gCpRqDYTC",
+     "type": "function",
+     "function": {
+      "name": "list_commits",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"per_page\": 30, \"reasoning\": \"The fork’s 2026 push could be mechanical. Inspect recent commits and authors to determine whether security-relevant maintenance actually landed.\"}"
+     }
+    },
+    {
+     "id": "call_vL7Vb0HIKtvAj1iHM34sJIC2",
+     "type": "function",
+     "function": {
+      "name": "list_pulls",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"state\": \"all\", \"per_page\": 20, \"reasoning\": \"Merged PR recency is stronger evidence of active governance than a push timestamp. Inspect the fork’s PR outcome.\"}"
+     }
+    },
+    {
+     "id": "call_GNEoyBRHETcfUhTHYpssm49z",
+     "type": "function",
+     "function": {
+      "name": "list_issues",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"state\": \"open\", \"sort\": \"updated\", \"per_page\": 20, \"reasoning\": \"The original’s unresolved SSRF is decisive; inspect the fork’s live issues for its own vulnerability and responsiveness signal.\"}"
+     }
+    },
+    {
+     "id": "call_LxUz8loWJbEhkkaNLQONP5s8",
+     "type": "function",
+     "function": {
+      "name": "get_security_advisories",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"reasoning\": \"Look for maintainer-published security records in the candidate successor, independent of its code lineage.\"}"
+     }
+    },
+    {
+     "id": "call_MjastPzBX2x16R0OuhiaTAJq",
+     "type": "function",
+     "function": {
+      "name": "list_contributors",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"reasoning\": \"If the fork is actively maintained, contributor concentration and named stewards matter. Establish whether it is a one-person veneer.\"}"
+     }
+    }
+   ]
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_o7DZkt9snUfEnZyRmXOOz2Nv",
+   "name": "get_repo",
+   "content": "[step 21]\npostmanlabs/postman-request — Simplified HTTP request client.\nstars 155, forks 49, open issues+PRs 3\ncreated 2016-08-23, last push 2026-07-21, default branch master\nlicense: Apache-2.0, language: JavaScript, size 3,022 KB\narchived: False, disabled: False, fork: True (parent: request/request)"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_9kgYSWDas5NebJAdUzBGUbrP",
+   "name": "get_file",
+   "content": "[step 22]\nREADME.md @ default branch (54,234 chars):\n\n# Request - Simplified HTTP client\n\nThis is a fork of the excellent `request` module, which is used inside Postman Runtime. It contains a few bugfixes that are not fixed in `request`:\n\n- Handling of old-style deflate responses: https://github.com/request/request/issues/2197\n- Correct encoding of URL Parameters: https://github.com/nodejs/node/issues/8321\n- Redirect behavior for 307 responses when Host header is set: https://github.com/request/request/issues/2666\n- Fix missing `content-length` header for streaming requests: https://github.com/request/request/issues/316\n- Exception handling for large form-data: https://github.com/request/request/issues/1561\n- Added feature to bind on stream emits via options\n- Allowed sending request body with HEAD method\n- Added option to retain `authorization` header when a redirect happens to a different hostname\n- Reinitialize FormData stream on 307 or 308 redirects\n- Respect form-data fields ordering\n- Fixed authentication leak in 307 and 308 redirects\n- Added `secureConnect` to timings and `secureHandshake` to timingPhases\n- Fixed `Request~getNewAgent` to account for `passphrase` while generating poolKey\n- Added support for extending the root CA certificates\n- Added `verbose` mode to bubble up low-level request-response information\n\n## Super simple to use\n\nRequest is designed to be the simplest way possible to make http calls. It supports HTTPS and follows redirects by default.\n\n```js\nconst request = require('postman-request');\nrequest('http://www.google.com', function (error, response, body) {\n  console.log('error:', error); // Print the error if one occurred\n  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received\n  console.log('body:', body); // Print the HTML for the Google homepage.\n});\n```\n\n\n## Table of contents\n\n- [Streaming](#streaming)\n- [Promises & Async/Await](#promises--asyncawait)\n- [Forms](#forms)\n- [HTTP Authentication](#http-authentication)\n- [Custom HTTP Headers](#custom-http-headers)\n- [OAuth Signing](#oauth-signing)\n- [Proxies](#proxies)\n- [Unix Domain Sockets](#unix-domain-sockets)\n- [TLS/SSL Protocol](#tlsssl-protocol)\n- [Support for HAR 1.2](#support-for-har-12)\n- [**All Available Options**](#requestoptions-callback)\n\nRequest also offers [convenience methods](#convenience-methods) like\n`request.defaults` and `request.post`, and there are\nlots of [usage examples](#examples) and several\n[debugging techniques](#debugging).\n\n\n---\n\n\n## Streaming\n\nYou can stream any response to a file stream.\n\n```js\nrequest('http://google.com/doodle.png').pipe(fs.createWriteStream('doodle.png'))\n```\n\nYou can also stream a file to a PUT or POST request. This method will also check the file extension against a mapping of file extensions to content-types (in this case `application/json`) and use the proper `content-type` in the PUT request (if the headers don’t already provide one).\n\n```js\nfs.createReadStream('file.json').pipe(request.put('http://mysite.com/obj.json'))\n```\n\nRequest can also `pipe` to itself. When doing so, `content-type` and `content-length` are preserved in the PUT headers.\n\n```js\nrequest.get('http://google.com/img.png').pipe(request.put('http://mysite.com/img.png'))\n```\n\nRequest emits a \"response\" event when a response is received. The `response` argument will be an instance of [http.IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage).\n\n```js\nrequest\n  .get('http://google.com/img.png')\n  .on('response', function(response) {\n    console.log(response.statusCode) // 200\n    console.log(response.headers['content-type']) // 'image/png'\n  })\n  .pipe(request.put('http://mysite.com/img.png'))\n```\n\nTo easily handle errors when streaming requests, listen to the `error` event before piping:\n\n```js\nrequest\n  .get('http://mysite.com/doodle.png')\n  .on('error', function(err) {\n    console.log(err)\n  })\n  .pipe(fs.createWriteStream('doodle.png'))\n```\n\nNow let’s get fancy.\n\n```js\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    if (req.method === 'PUT') {\n      req.pipe(request.put('http://mysite.com/doodle.png'))\n    } else if (req.method === 'GET' || req.method === 'HEAD') {\n      request.get('http://mysite.com/doodle.png').pipe(resp)\n    }\n  }\n})\n```\n\nYou can also `pipe()` from `http.ServerRequest` instances, as well as to `http.ServerResponse` instances. The HTTP method, headers, and entity-body data will be sent. Which means that, if you don't really care about security, you can do:\n\n```js\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    const x = request('http://mysite.com/doodle.png')\n    req.pipe(x)\n    x.pipe(resp)\n  }\n})\n```\n\nAnd since `pipe()` returns the destination stream in ≥ Node 0.5.x you can do one line proxying. :)\n\n```js\nreq.pipe(request('http://mysite.com/doodle.png')).pipe(resp)\n```\n\nAlso, none of this new functionality conflicts with requests previous features, it just expands them.\n\n```js\nconst r = request.defaults({'proxy':'http://localproxy.com'})\n\nhttp.createServer(function (req, resp) {\n  if (req.url === '/doodle.png') {\n    r.get('http://google.com/doodle.png').pipe(resp)\n  }\n})\n```\n\nYou can still use intermediate proxies, the requests will still follow HTTP forwards, etc.\n\n[back to top](#table-of-contents)\n\n\n---\n\n\n## Promises & Async/Await\n\n`request` supports both streaming and callback interfaces natively. If you'd like `request` to return a Promise instead, you can use an alternative interface wrapper for `request`. These wrappers can be useful if you prefer to work with Promises, or if you'd like to use `async`/`await` in ES2017.\n\nSeveral alternative interfaces are provided by the request team, including:\n- [`request-promise`](https://github.com/request/request-promise) (uses [Bluebird](https://github.com/petkaantonov/bluebird) Promises)\n- [`request-promise-native`](https://github.com/request/request-promise-native) (uses native Promises)\n- [`request-promise-any`\n...[truncated — 48,234 more chars]"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_nOIRUcHPkOsv4OT3MYMDpyx7",
+   "name": "get_file",
+   "content": "[step 23]\npackage.json @ default branch (1,975 chars):\n{\n  \"name\": \"postman-request\",\n  \"description\": \"Simplified HTTP request client.\",\n  \"keywords\": [\n    \"http\",\n    \"simple\",\n    \"util\",\n    \"utility\"\n  ],\n  \"version\": \"2.88.1-postman.49\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/postmanlabs/postman-request.git\"\n  },\n  \"license\": \"Apache-2.0\",\n  \"engines\": {\n    \"node\": \">= 16\"\n  },\n  \"main\": \"index.js\",\n  \"files\": [\n    \"lib/\",\n    \"index.js\",\n    \"request.js\"\n  ],\n  \"dependencies\": {\n    \"@postman/form-data\": \"~3.1.1\",\n    \"@postman/tough-cookie\": \"~4.1.3-postman.1\",\n    \"@postman/tunnel-agent\": \"^0.6.8\",\n    \"aws-sign2\": \"~0.7.0\",\n    \"aws4\": \"^1.12.0\",\n    \"caseless\": \"~0.12.0\",\n    \"combined-stream\": \"~1.0.6\",\n    \"extend\": \"~3.0.2\",\n    \"forever-agent\": \"~0.6.1\",\n    \"http-signature\": \"~1.4.0\",\n    \"is-typedarray\": \"~1.0.0\",\n    \"isstream\": \"~0.1.2\",\n    \"json-stringify-safe\": \"~5.0.1\",\n    \"mime-types\": \"^2.1.35\",\n    \"oauth-sign\": \"~0.9.0\",\n    \"qs\": \"~6.14.1\",\n    \"safe-buffer\": \"^5.1.2\",\n    \"socks-proxy-agent\": \"^8.0.5\",\n    \"stream-length\": \"^1.0.2\",\n    \"uuid\": \"^8.3.2\"\n  },\n  \"scripts\": {\n    \"test\": \"npm run lint && npm run test-ci && npm run test-browser\",\n    \"test-ci\": \"taper tests/test-*.js\",\n    \"test-cov\": \"istanbul cover tape tests/test-*.js\",\n    \"test-browser\": \"node tests/browser/start.js\",\n    \"lint\": \"standard\"\n  },\n  \"devDependencies\": {\n    \"bluebird\": \"^3.2.1\",\n    \"browserify\": \"^16.5.2\",\n    \"browserify-istanbul\": \"^3.0.0\",\n    \"buffer-equal\": \"^1.0.1\",\n    \"codecov\": \"^3.0.4\",\n    \"coveralls\": \"^3.0.2\",\n    \"function-bind\": \"^1.0.2\",\n    \"istanbul\": \"^0.4.0\",\n    \"karma\": \"^6.4.4\",\n    \"karma-browserify\": \"^8.1.0\",\n    \"karma-chrome-launcher\": \"^3.1.1\",\n    \"karma-cli\": \"^2.0.0\",\n    \"karma-coverage\": \"^2.2.1\",\n    \"karma-tap\": \"^4.2.0\",\n    \"postman-url-encoder\": \"^3.0.6\",\n    \"puppeteer\": \"^1.20.0\",\n    \"rimraf\": \"^2.2.8\",\n    \"server-destroy\": \"^1.0.1\",\n    \"standard\": \"^9.0.0\",\n    \"tape\": \"^4.6.0\",\n    \"taper\": \"^0.5.0\"\n  }\n}\n"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_kWwC1rXRj9GWIA7gCpRqDYTC",
+   "name": "list_commits",
+   "content": "[step 24]\n30 commits (no filters, newest first):\n- 02741a5589 [2026-07-21] appurva21: 2.88.1-postman.49\n- 286e0b28b0 [2026-07-21] MrRobotBaguette: APICLIENT-3136: security: strip Cookie on cross-origin redirect and use full-origin check (#113)\n- bbc0e4e1f2 [2026-01-15] saecula: 2.88.1-postman.48\n- 6354da7fc8 [2026-01-15] saecula: Merge pull request #111 from rm-maxport/update/qs-package\n- 02963ca632 [2026-01-13] rm-maxport: chore: update qs package to latest version\n- 5caf57af15 [2025-12-11] appurva21: 2.88.1-postman.47\n- 1741509f8f [2025-12-11] deve-sh: feat: Handle request errors with attached responses (#108)\n- 439256cc51 [2025-12-11] appurva21: fix: http agent failing test\n- 5852ea53ce [2025-10-30] appurva21: 2.88.1-postman.46\n- c16bd7d0e4 [2025-10-30] appurva21: Merge pull request #107 from postmanlabs/feature/fix-unix-domain-socket-detection\n- 8503f2049e [2025-10-30] appurva21: fix: unix domain socket detection\n- 2cd9be29cd [2025-10-16] appurva21: 2.88.1-postman.45\n- a368191776 [2025-10-16] appurva21: Merge pull request #106 from postmanlabs/feature/remove-unwanted-dependency\n- 5961af2545 [2025-10-16] appurva21: fix: remove unwanted dependency\n- 4d29675f01 [2025-10-16] appurva21: 2.88.1-postman.44\n- 838bb12b4e [2025-10-16] appurva21: Merge pull request #105 from postmanlabs/feature/ssl-keylog\n- a15cc38cd3 [2025-10-15] parthverma1: chore: lint\n- b581f5b33b [2025-10-15] parthverma1: chore: test for sslKeyLogFile option\n- 7fc166a588 [2025-10-15] parthverma1: chore: rename option `keyLog` to `sslKeyLogFile`\n- 6ba217d912 [2025-10-10] parthverma1: chore: ignore 'fs/promises' in browser tests bundle\n- 4cdac7c330 [2025-10-09] parthverma1: fix: Failing HTTP agents tests\n- 8835643820 [2025-10-08] parthverma1: chore: linter fixes\n- c775b46ef5 [2025-10-08] parthverma1: chore: add/remove logging statement\n- 796586e23d [2025-10-08] parthverma1: fix: Only attach keylog event once on the socket, and partition the agents based on keylog file path\n- 4e06eebca4 [2025-10-07] parthverma1: chore: Switch to async method for appending keylog material\n- e3e63abbfc [2025-10-07] parthverma1: feat: Add support for capturing SSL session keys via `keyLog` option\n- c41fddeee7 [2025-07-30] appurva21: 2.88.1-postman.43\n- 83f42240d3 [2025-07-30] appurva21: Merge pull request #104 from postmanlabs/feature/socks-proxy\n- 5d2c29a298 [2025-07-30] appurva21: Remove socks proxy agent for browser tests\n- bd08b97b78 [2025-07-29] appurva21: Add support for SOCKS proxy\n(showing the 30 most recent — there may be more; narrow with since/until/author)"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_vL7Vb0HIKtvAj1iHM34sJIC2",
+   "name": "list_pulls",
+   "content": "[step 25]\n20 all PRs (most recently updated first):\n- #114 [open] Update CI Node and Windows matrix (by appurva21)\n- #113 [merged 2026-07-21] APICLIENT-3136: security: strip Cookie on cross-origin redirect and use full-ori (by MrRobotBaguette)\n- #112 [open] Please deprecate beta versions that sort above stable releases due to semver ord (by Tsarter)\n- #110 [open] BREAKING CHANGE : upgrade nodejs support till 24 and fix security vulns (by samarpanB)\n- #111 [merged 2026-01-15] chore: update qs package to latest version (by rm-maxport)\n- #108 [merged 2025-12-11] feat: Handle request errors with attached responses (by deve-sh)\n- #109 [closed] Trial branch to verify tests regression (by deve-sh)\n- #107 [merged 2025-10-30] fix: unix domain socket detection (by appurva21)\n- #106 [merged 2025-10-16] fix: remove unwanted dependency (by appurva21)\n- #105 [merged 2025-10-16] feat: Add support for capturing SSL session keys via `keyLog` option (by parthverma1)\n- #104 [merged 2025-07-30] Added support for SOCKS proxy (by appurva21)\n- #103 [merged 2025-02-24] Remove dead dependency on `brotli` (by wojtekmaj)\n- #100 [merged 2025-02-23] Removing deprecated har-validator library (by davidcao1337)\n- #101 [merged 2025-02-03] HTTP/2 authority header missing port (by parthverma1)\n- #99 [merged 2024-09-04] Fix HTTP/2 connection refs causing event loop to not exit (by parthverma1)\n- #98 [merged 2024-08-16] Fix Auto Requests crashing after client network disconnect (by parthverma1)\n- #97 [merged 2024-08-06] Added empty CRLF for http2 sent headers to avoid skipping missed headers in debu (by parthverma1)\n- #93 [merged 2024-07-23] Added support for HTTP/2 (by parthverma1)\n- #96 [merged 2024-08-01] Added dynamic  endstream  (by parthverma1)\n- #95 [merged 2024-07-26] Added exception handlers when removing listeners from http2 sockets (by parthverma1)\nsummary: 16 of 20 listed PRs were merged; most recent merge 2026-07-21"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_GNEoyBRHETcfUhTHYpssm49z",
+   "name": "list_issues",
+   "content": "[step 26]\nno open issues found (3 pull requests excluded)."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_LxUz8loWJbEhkkaNLQONP5s8",
+   "name": "get_security_advisories",
+   "content": "[step 27]\nno repository-published security advisories. NOTE: maintainers often never publish repo-level advisories even when CVEs exist — cross-check with osv_query using the package name from the manifest (e.g. package.json)."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_MjastPzBX2x16R0OuhiaTAJq",
+   "name": "list_contributors",
+   "content": "[step 28]\ntop 10 of 30 listed contributors (share of the top-30 commit total — a proxy for bus factor):\n- mikeal: 622 commits (29.6%)\n- simov: 475 commits (22.6%)\n- nylen: 300 commits (14.3%)\n- codenirvana: 205 commits (9.7%)\n- greenkeeperio-bot: 49 commits (2.3%)\n- seanstrom: 46 commits (2.2%)\n- FredKSchott: 38 commits (1.8%)\n- kunagpal: 35 commits (1.7%)\n- isaacs: 32 commits (1.5%)\n- coditva: 31 commits (1.5%)\n\n[budget: 5/30 LLM calls used — 25 remaining]"
+  },
+  {
+   "role": "assistant",
+   "content": null,
+   "tool_calls": [
+    {
+     "id": "call_llFEj6fl79Je82nUSkMCxwhn",
+     "type": "function",
+     "function": {
+      "name": "osv_query",
+      "arguments": "{\"package\": \"postman-request\", \"ecosystem\": \"npm\", \"reasoning\": \"The fork is actively releasing under postman-request; query OSV for its published package identity before treating its security maintenance as sufficient.\"}"
+     }
+    },
+    {
+     "id": "call_lwuburIV9M8o9LROGxLNzCSk",
+     "type": "function",
+     "function": {
+      "name": "get_commit",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"sha\": \"286e0b28b0\", \"reasoning\": \"A 2026 commit claims to harden cross-origin redirects. Inspect its diff to determine whether it addresses the original SSRF/cross-origin security exposure or merely advertises security.\"}"
+     }
+    },
+    {
+     "id": "call_EXFBS2XS3DJPzMxfNOs848nY",
+     "type": "function",
+     "function": {
+      "name": "get_user",
+      "arguments": "{\"login\": \"appurva21\", \"reasoning\": \"Appurva21 repeatedly authors releases and merges in the active fork. Profile the current release steward behind the candidate successor.\"}"
+     }
+    },
+    {
+     "id": "call_ote2sBgEv8WDXkcGUETBHdBA",
+     "type": "function",
+     "function": {
+      "name": "get_user",
+      "arguments": "{\"login\": \"MrRobotBaguette\", \"reasoning\": \"MrRobotBaguette authored the recent security-sensitive redirect change. Identify the named author behind that mitigation.\"}"
+     }
+    },
+    {
+     "id": "call_5bbDdsIqfEWl7cdgJOTYl5QQ",
+     "type": "function",
+     "function": {
+      "name": "get_user_events",
+      "arguments": "{\"login\": \"appurva21\", \"reasoning\": \"The release steward’s current activity is a useful corroboration that the fork’s 2026 release cadence reflects an active maintainer.\"}"
+     }
+    },
+    {
+     "id": "call_DoRGXDDmu9qVw1n04v2NNk2S",
+     "type": "function",
+     "function": {
+      "name": "get_user_events",
+      "arguments": "{\"login\": \"MrRobotBaguette\", \"reasoning\": \"The security-change author’s recent activity helps distinguish an actively maintained organizational patch from an orphaned contribution.\"}"
+     }
+    }
+   ]
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_llFEj6fl79Je82nUSkMCxwhn",
+   "name": "osv_query",
+   "content": "[step 29]\nOSV: no known vulnerabilities recorded for npm package 'postman-request'."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_lwuburIV9M8o9LROGxLNzCSk",
+   "name": "get_commit",
+   "content": "[step 30]\ncommit 286e0b28b0 by MrRobotBaguette on 2026-07-21\nmessage: APICLIENT-3136: security: strip Cookie on cross-origin redirect and use full-origin check (#113)\nstats: 3 files changed, +362 -4\n\n--- tests/test-redirect-cookie.js (+249 -0, added)\n@@ -0,0 +1,249 @@\n+'use strict'\n+\n+var tape = require('tape')\n+var destroyable = require('server-destroy')\n+\n+var server = require('./server')\n+var request = require('../index')\n+var url = require('url')\n+var Redirect = require('../lib/redirect').Redirect\n+\n+function lookupLocalhost (hostname, options, callback) {\n+  callback(null, '127.0.0.1', 4)\n+}\n+\n+function redirectResponse (location) {\n+  return {\n+    statusCode: 302,\n+    caseless: {\n+      has: function (header) {\n+        return header.toLowerCase() === 'location'\n+      },\n+      get: function () {\n+        return location\n+      }\n+    },\n+    resume: function () {}\n+  }\n+}\n+\n+function requestForRedirect (from, to) {\n+  var req = {\n+    uri: url.parse(from),\n+    urlParser: url,\n+    headers: {\n+      host: 'example.com',\n+      cookie: 'manual=1'\n+    },\n+    originalCookieHeader: 'manual=1',\n+    method: 'GET',\n+    debug: function () {},\n+    removeHeader: function (header) {\n+      delete this.headers[header.toLowerCase()]\n+    },\n+    setHeader: function (header, value) {\n+      this.headers[header.toLowerCase()] = value\n+    },\n+    emit: function () {},\n+    init: function () {}\n+  }\n+\n+  var redirect = new Redirect(req)\n+  redirect.onResponse(redirectResponse(to))\n+  return req\n+}\n+\n+function runTest (t, statusCode) {\n+  var s = server.createServer()\n+  var redirects = 0\n+  var cookieHeader = 'manual=1'\n+  var jar = request.jar()\n+\n+  destroyable(s)\n+\n+  s.on('/', function (req, res) {\n+    if (req.headers.host === `${s.redirectHost}:${s.port}`) {\n+      res.writeHead(statusCode || 302, {\n+        location: `http://${s.respondHost}:${s.port}/`\n+      })\n+      res.end()\n+    } else if (req.headers.host === `${s.respondHost}:${s.port}`) {\n+      res.writeHead(200)\n+      res.end('cookie: ' + (req.headers.cookie || '(nothing)'))\n+    } else {\n+      res.writeHead(400)\n+      res.end('unknown host')\n+    }\n+  })\n+\n+  s.listen(0, function () {\n...[patch truncated, 170 more lines]\n\n--- tests/test-redirect-auth.js (+91 -1, modified)\n@@ -5,6 +5,8 @@ var request = require('../index')\n var util = require('util')\n var tape = require('tape')\n var destroyable = require('server-destroy')\n+var url = require('url')\n+var Redirect = require('../lib/redirect').Redirect\n \n var s = server.createServer()\n var ss = server.createSSLServer()\n@@ -80,14 +82,91 @@ function runTest (name, redir, expectAuth) {\n   })\n }\n \n+function redirectResponse (location) {\n+  return {\n+    statusCode: 302,\n+    caseless: {\n+      has: function (header) {\n+        return header.toLowerCase() === 'location'\n+      },\n+      get: function () {\n+        return location\n+      }\n+    },\n+    resume: function () {}\n+  }\n+}\n+\n+function requestForRedirect (from, to) {\n+  var req = {\n+    uri: url.parse(from),\n+    urlParser: url,\n+    headers: {\n+      host: 'example.com',\n+      authorization: 'Basic abc'\n+    },\n+    method: 'GET',\n+    debug: function () {},\n+    removeHeader: function (header) {\n+      delete this.headers[header.toLowerCase()]\n+    },\n+    setHeader: function (header, value) {\n+      this.headers[header.toLowerCase()] = value\n+    },\n+    emit: function () {},\n+    init: function () {}\n+  }\n+\n+  var redirect = new Redirect(req)\n+  redirect.onResponse(redirectResponse(to))\n+  return req\n+}\n+\n+function runPortTest () {\n+  tape('redirect to same host different port', function (t) {\n+    var from = server.createServer()\n+    var to = server.createServer()\n+\n+    destroyable(from)\n+    destroyable(to)\n+\n+    from.on('/', function (req, res) {\n+      res.writeHead(301, {\n+        location: to.url + '/'\n+      })\n+      res.end()\n+    })\n+\n+    to.on('/', function (req, res) {\n+      res.end('auth: ' + (req.headers.authorization || '(nothing)'))\n+    })\n+\n+    from.listen(0, function () {\n+      to.listen(0, function () {\n+        request(from.url, function (err, res, body) {\n+          t.equal(err, null)\n+          t.equal(res.request.uri.href, to.url + '/')\n+          t.equal(res.statusCode, 200)\n+          t.equal(body, 'auth: (nothing)')\n+          from.destroy(function () {\n...[patch truncated, 44 more lines]\n\n--- lib/redirect.js (+22 -3, modified)\n@@ -3,6 +3,14 @@\n var fs = require('fs')\n var isUrl = /^https?:/\n \n+function defaultPort (protocol) {\n+  return protocol === 'https:' ? '443' : '80'\n+}\n+\n+function origin (uri) {\n+  return uri.protocol + '//' + uri.hostname + ':' + (uri.port || defaultPort(uri.protocol))\n+}\n+\n function Redirect (request) {\n   this.request = request\n   this.followRedirect = true\n@@ -123,14 +131,25 @@ Redirect.prototype.onResponse = function (response) {\n \n   self.redirects.push({ statusCode: response.statusCode, redirectUri: redirectTo })\n \n-  // if the redirect hostname (not just port or protocol) is changed:\n+  // if the redirect origin (protocol, hostname or port) is changed:\n   //  1. remove host header, the new host will be populated on request.init\n-  //  2. remove authorization header, avoid authentication leak\n+  //  2. remove cookie header, avoid session leak across origins\n+  //  3. remove authorization header, avoid authentication leak\n   // @note: This is done because of security reasons, irrespective of the\n   // status code or request method used.\n-  if (request.headers && uriPrev.hostname !== request.uri.hostname) {\n+  // @note: comparing full origin (protocol + hostname + port) so that\n+  // credentials are not leaked across ports or on a protocol downgrade\n+  // (e.g. https -> http), not just when the hostname changes.\n+  if (request.headers && origin(uriPrev) !== origin(request.uri)) {\n     request.removeHeader('host')\n \n+    // remove cookie header, avoid session cookie leak across origins\n+    request.removeHeader('cookie')\n+\n+    // clear the cached original cookie header so it isn't re-prepended\n+    // to the Cookie header on subsequent hops (see Request.prototype.jar)\n+    delete request.originalCookieHeader\n+\n     // use followAuthorizationHeader option to retain authorization header\n     if (!self.followAuthorizationHeader) {\n       request.removeHeader('authorization')"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_EXFBS2XS3DJPzMxfNOs848nY",
+   "name": "get_user",
+   "content": "[step 31]\nappurva21 (User) — Appurva Murawat\naccount created 2017-01-08, 11 public repos, 28 followers\ncompany: @postmanlabs\nlocation: Bangalore\nbio: Engineer @postmanlabs"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_ote2sBgEv8WDXkcGUETBHdBA",
+   "name": "get_user",
+   "content": "[step 32]\nMrRobotBaguette (User) — no display name\naccount created 2026-05-11, 0 public repos, 0 followers"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_5bbDdsIqfEWl7cdgJOTYl5QQ",
+   "name": "get_user_events",
+   "content": "[step 33]\n15 recent public events for appurva21, from 2026-08-07 to 2026-09-01: IssuesEvent×8, IssueCommentEvent×7\nmost recent: IssuesEvent on postmanlabs/postman-app-support at 2026-09-01\nNOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline."
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_DoRGXDDmu9qVw1n04v2NNk2S",
+   "name": "get_user_events",
+   "content": "[step 34]\nno public activity for MrRobotBaguette in GitHub's recent-events window. NOTE: GitHub serves only ~90 days / 300 events of public activity — silence here does not prove long-term inactivity; use list_commits(author=...) for a durable timeline.\n\n[budget: 6/30 LLM calls used — 24 remaining]"
+  },
+  {
+   "role": "assistant",
+   "content": null,
+   "tool_calls": [
+    {
+     "id": "call_hQU00hGH8xPeBiX5LlhhCKUx",
+     "type": "function",
+     "function": {
+      "name": "render_verdict",
+      "arguments": "{\"decision\":\"reject\",\"confidence\":\"high\",\"reasoning\":\"The largest fork is a genuinely active, separately published Postman-maintained derivative with a recent redirect credential-leak hardening patch and no OSV records. That is useful migration evidence, but it does not repair the decision on the requested dependency, request/request, whose explicit retirement and unfixed SSRF remain unchanged.\",\"summary\":\"Reject request/request unchanged. The largest fork, postmanlabs/postman-request, is an active separately named package with recent releases, merged security work, and no OSV vulnerabilities recorded; it may merit a separate adoption assessment. It does not change the verdict on request/request: the requested package remains explicitly deprecated with an unresolved SSRF record and no maintenance since 2020.\",\"evidence\":[{\"claim\":\"The requested project explicitly states that it is deprecated and that no new changes are expected.\",\"step_id\":2,\"data_point\":\"# Deprecated!\\n\\nAs of Feb 11th 2020, request is fully deprecated. No new changes are expected to land.\"},{\"claim\":\"OSV records an unfixed SSRF issue for the requested request package.\",\"step_id\":4,\"data_point\":\"Server-Side Request Forgery in Request\\n  introduced 0, no fix listed\"},{\"claim\":\"The original repository’s PR history reports its most recent merge in 2020.\",\"step_id\":8,\"data_point\":\"summary: 1 of 20 listed PRs were merged; most recent merge 2020-02-11\"},{\"claim\":\"The largest fork is an active fork of request/request with a July 2026 push.\",\"step_id\":21,\"data_point\":\"last push 2026-07-21 ... fork: True (parent: request/request)\"},{\"claim\":\"The fork is a separately published package, postman-request.\",\"step_id\":23,\"data_point\":\"\\\"name\\\": \\\"postman-request\\\" ... \\\"version\\\": \\\"2.88.1-postman.49\\\"\"},{\"claim\":\"The fork merged a July 2026 security change that strips cookies on cross-origin redirects.\",\"step_id\":30,\"data_point\":\"message: APICLIENT-3136: security: strip Cookie on cross-origin redirect and use full-origin check (#113)\"},{\"claim\":\"The fork’s PR history shows ongoing merged maintenance through July 2026.\",\"step_id\":25,\"data_point\":\"summary: 16 of 20 listed PRs were merged; most recent merge 2026-07-21\"},{\"claim\":\"OSV returned no known vulnerabilities for postman-request.\",\"step_id\":29,\"data_point\":\"OSV: no known vulnerabilities recorded for npm package 'postman-request'.\"}],\"unverified_notes\":[\"No malicious-code or hidden-functionality record was returned by the OSV package query for request.\",\"The investigation did not perform a full replacement assessment of postman-request, including registry provenance, release-to-commit linkage, or whether it resolves CVE-2023-28155 specifically.\"],\"changed_from_previous\":\"The verdict on request/request is unchanged. New evidence establishes that the largest fork is actively maintained under the separate postman-request package name, but it does not alter the original package’s verified deprecation, unresolved SSRF record, or lack of post-2020 merged maintenance.\"}"
+     }
+    }
+   ]
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_hQU00hGH8xPeBiX5LlhhCKUx",
+   "name": "render_verdict",
+   "content": "[senior review] Not accepted yet — you are closing after 3 call(s) with 23 of 30 unused. Before a verdict this early: list every anomaly your case notes raised (malicious-code or hidden-functionality records, a dominant or vanished maintainer, a repository history that doesn't match the package, unanswered security reports) and say whether each was pursued to a named author and outcome. Pursue the unpursued ones now — batch the lookups — then render again. If there is truly nothing left to pursue, render again and say so in the summary.\n\n[budget: 7/30 LLM calls used — 23 remaining]"
+  },
+  {
+   "role": "assistant",
+   "content": null,
+   "tool_calls": [
+    {
+     "id": "call_ylnfq2w62uggRhJHlLau74kF",
+     "type": "function",
+     "function": {
+      "name": "get_commit",
+      "arguments": "{\"owner\": \"request\", \"repo\": \"request\", \"sha\": \"aded7e4f8e\", \"reasoning\": \"The original deprecation author is named, but the exact diff has not been read. Inspect it to close the named-author outcome on the retirement action.\"}"
+     }
+    },
+    {
+     "id": "call_dO7tRyMLjvhJHegSpw9IjY9T",
+     "type": "function",
+     "function": {
+      "name": "get_commit",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"sha\": \"02741a5589\", \"reasoning\": \"The candidate fork’s July 2026 version bump may be the release commit for its security patch. Inspect its diff to establish whether the security change was actually versioned.\"}"
+     }
+    },
+    {
+     "id": "call_oOkQGn4SCmezlJui9jjIeR2r",
+     "type": "function",
+     "function": {
+      "name": "list_commits",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"since\": \"2026-07-20\", \"until\": \"2026-07-22\", \"author\": \"appurva21\", \"per_page\": 30, \"reasoning\": \"Appurva21 is the organizational release steward; inspect their commits around the latest release to link named stewardship to the published version.\"}"
+     }
+    },
+    {
+     "id": "call_DUkcGSSx2F8WKbCGzuucPHtr",
+     "type": "function",
+     "function": {
+      "name": "list_commits",
+      "arguments": "{\"owner\": \"postmanlabs\", \"repo\": \"postman-request\", \"since\": \"2026-07-20\", \"until\": \"2026-07-22\", \"author\": \"MrRobotBaguette\", \"per_page\": 30, \"reasoning\": \"MrRobotBaguette authored the redirect hardening patch. Retrieve their fork timeline around the patch to close the named-author outcome.\"}"
+     }
+    },
+    {
+     "id": "call_EOtW2DMapBHBjy3C3mtQ9wuL",
+     "type": "function",
+     "function": {
+      "name": "get_user",
+      "arguments": "{\"login\": \"SzymonDrosdzol\", \"reasoning\": \"The original SSRF report is an unanswered-security-report anomaly. Identify its named reporter so the disclosure outcome is attributed rather than anonymous.\"}"
+     }
+    }
+   ]
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_ylnfq2w62uggRhJHlLau74kF",
+   "name": "get_commit",
+   "content": "[step 36]\ncommit aded7e4f8e by mikeal on 2020-02-11\nmessage: doc: note full deprecation (#3267)\nstats: 1 files changed, +6 -0\n\n--- README.md (+6 -0, modified)\n@@ -1,3 +1,9 @@\n+# Deprecated!\n+\n+As of Feb 11th 2020, request is fully deprecated. No new changes are expected land. In fact, none have landed for some time.\n+\n+For more information about why request is deprecated and possible alternatives refer to\n+[this issue](https://github.com/request/request/issues/3142).\n \n # Request - Simplified HTTP client\n "
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_dO7tRyMLjvhJHegSpw9IjY9T",
+   "name": "get_commit",
+   "content": "[step 37]\ncommit 02741a5589 by appurva21 on 2026-07-21\nmessage: 2.88.1-postman.49\nstats: 1 files changed, +1 -1\n\n--- package.json (+1 -1, modified)\n@@ -7,7 +7,7 @@\n     \"util\",\n     \"utility\"\n   ],\n-  \"version\": \"2.88.1-postman.48\",\n+  \"version\": \"2.88.1-postman.49\",\n   \"repository\": {\n     \"type\": \"git\",\n     \"url\": \"https://github.com/postmanlabs/postman-request.git\""
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_oOkQGn4SCmezlJui9jjIeR2r",
+   "name": "list_commits",
+   "content": "[step 38]\n1 commits (since=2026-07-20, until=2026-07-22, author=appurva21, newest first):\n- 02741a5589 [2026-07-21] appurva21: 2.88.1-postman.49"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_DUkcGSSx2F8WKbCGzuucPHtr",
+   "name": "list_commits",
+   "content": "[step 39]\n1 commits (since=2026-07-20, until=2026-07-22, author=MrRobotBaguette, newest first):\n- 286e0b28b0 [2026-07-21] MrRobotBaguette: APICLIENT-3136: security: strip Cookie on cross-origin redirect and use full-origin check (#113)"
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_EOtW2DMapBHBjy3C3mtQ9wuL",
+   "name": "get_user",
+   "content": "[step 40]\nSzymonDrosdzol (User) — no display name\naccount created 2021-05-24, 3 public repos, 7 followers\ncompany: Doyensec\n\n[budget: 8/30 LLM calls used — 22 remaining]"
+  },
+  {
+   "role": "assistant",
+   "content": null,
+   "tool_calls": [
+    {
+     "id": "call_26Y8Hij2jfi9YmqdgPQy3Hod",
+     "type": "function",
+     "function": {
+      "name": "render_verdict",
+      "arguments": "{\"decision\":\"reject\",\"confidence\":\"high\",\"reasoning\":\"The review-requested anomalies have now been closed: no malicious-code record was returned; the original retirement was authored by Mikeal and its full-deprecation diff was inspected; the unanswered SSRF disclosure is attributed to SzymonDrosdzol of Doyensec; and the fork’s current security patch, named author, and release bump were inspected. The original package’s decisive abandonment and unfixed SSRF findings remain intact.\",\"summary\":\"Reject request/request unchanged. All raised anomalies were pursued: OSV returned no malicious-code record; Mikeal authored and committed the original project’s full-deprecation notice; SzymonDrosdzol of Doyensec reported the unanswered SSRF disclosure; and the largest fork was confirmed as an active, separately named Postman package with a security patch incorporated in its July 2026 version bump. That fork does not change the requested package’s status: request itself remains retired, unmaintained since 2020, and recorded by OSV with an SSRF vulnerability for which no fix is listed.\",\"evidence\":[{\"claim\":\"Mikeal authored the original repository’s full-deprecation commit.\",\"step_id\":36,\"data_point\":\"commit aded7e4f8e by mikeal on 2020-02-11\\nmessage: doc: note full deprecation (#3267)\"},{\"claim\":\"That retirement commit adds the statement that request is fully deprecated and no new changes are expected.\",\"step_id\":36,\"data_point\":\"As of Feb 11th 2020, request is fully deprecated. No new changes are expected land.\"},{\"claim\":\"OSV records an SSRF vulnerability for request with no fix listed.\",\"step_id\":4,\"data_point\":\"Server-Side Request Forgery in Request\\n  introduced 0, no fix listed\"},{\"claim\":\"The SSRF report says direct emails to the maintainer received no answer.\",\"step_id\":10,\"data_point\":\"we have received no answer.\"},{\"claim\":\"The named SSRF reporter is associated with Doyensec.\",\"step_id\":40,\"data_point\":\"SzymonDrosdzol (User) ... company: Doyensec\"},{\"claim\":\"The original repository’s PR history reports its most recent merge was in 2020.\",\"step_id\":8,\"data_point\":\"summary: 1 of 20 listed PRs were merged; most recent merge 2020-02-11\"},{\"claim\":\"The biggest fork is separately published as postman-request.\",\"step_id\":23,\"data_point\":\"\\\"name\\\": \\\"postman-request\\\" ... \\\"version\\\": \\\"2.88.1-postman.49\\\"\"},{\"claim\":\"The fork’s security patch was followed the same day by a version bump to 2.88.1-postman.49.\",\"step_id\":37,\"data_point\":\"commit 02741a5589 by appurva21 on 2026-07-21\\nmessage: 2.88.1-postman.49\"}],\"unverified_notes\":[\"OSV returned no malicious-code or hidden-functionality record for request, but this investigation did not inspect npm tarballs or registry publisher identities.\",\"The largest fork was not fully assessed as a replacement: release-to-registry publication linkage and specific remediation of CVE-2023-28155 were not verified.\"],\"changed_from_previous\":\"The decision remains reject. The additional investigation confirms that the largest fork is active and separately versioned, but it also confirms the original project’s retirement was deliberately committed by Mikeal and does not resolve request’s recorded unfixed SSRF vulnerability or its absence of merged maintenance since 2020.\"}"
+     }
+    }
+   ]
+  },
+  {
+   "role": "tool",
+   "tool_call_id": "call_26Y8Hij2jfi9YmqdgPQy3Hod",
+   "name": "render_verdict",
+   "content": "Verdict recorded (v2).\n\n[budget: 9/30 LLM calls used — 21 remaining]"
+  }
+ ],
+ "status": "concluded",
+ "pending_pitch": null,
+ "early_review_phase": "retask: now check the biggest fork",
+ "wrapup_granted": false
+}

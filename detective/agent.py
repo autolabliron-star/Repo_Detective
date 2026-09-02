@@ -119,6 +119,11 @@ def _stream_step(entry: dict, prev: dict | None = None) -> None:
 
 # ------------------------- human-in-the-loop ---------------------------- #
 
+def tty_decider(inv: Investigation, requested: int, pitch: dict | None) -> int:
+    """Default budget decision: ask on the terminal. The web UI passes its own decider."""
+    return _ask_human_for_budget(requested)
+
+
 def _ask_human_for_budget(requested: int) -> int:
     """Returns calls granted (0 = denied). Auto-denies when non-interactive — never hangs."""
     if not sys.stdin.isatty():
@@ -136,9 +141,11 @@ def _ask_human_for_budget(requested: int) -> int:
     return 0
 
 
-def _handle_pause(inv: Investigation, pitch: dict | None, phase: str) -> bool:
+def _handle_pause(inv: Investigation, pitch: dict | None, phase: str, decide=None) -> bool:
     """Budget is gone (or the agent proactively asked). Show the case, ask the human.
-    Returns True if extra calls were granted; on denial grants exactly 1 wrap-up call."""
+    Returns True if extra calls were granted; on denial grants exactly 1 wrap-up call.
+    `decide(inv, requested, pitch) -> granted` is the human channel: terminal by default, web UI otherwise."""
+    decide = decide or tty_decider
     inv.set_status(STATUS_PAUSED)
     print(f"\n{term.rule('═')}")
     print(term.bold(term.yellow("⏸  BUDGET PAUSE — the agent needs a human decision")))
@@ -160,21 +167,34 @@ def _handle_pause(inv: Investigation, pitch: dict | None, phase: str) -> bool:
         for entry in inv.log[-3:]:
             print(f"  step {entry['id']} [{entry['tool']}]: {entry['reasoning'] or '(no notes)'}")
         print(f"Granting more calls lets it finish; denying forces a best-effort verdict now.")
+        # The web UI reads the pending pitch from state — give it something to show for an exhaustion pause too.
+        inv.state["pending_pitch"] = {
+            "exhausted": True, "calls_requested": requested, "planned_steps": [],
+            "argument": "The budget ran out before the agent could conclude. Latest case notes: "
+                        + " · ".join(f"step {e['id']} [{e['tool']}]: {e['reasoning'] or '(no notes)'}" for e in inv.log[-3:]),
+        }
+        inv.save()
 
-    granted = _ask_human_for_budget(requested)
+    granted = decide(inv, requested, pitch)
+    who_label = getattr(decide, "label", None) or ("human" if sys.stdin.isatty() else "auto (non-interactive)")
     if granted > 0:
         inv.add_extension(requested, granted, (pitch or {}).get("argument", "budget exhausted mid-investigation"),
-                          decided_by="human")
+                          decided_by=who_label)
         inv.state["wrapup_granted"] = False  # a real grant resets the one-shot wrap-up
         print(term.green(f"✔ Granted +{granted} calls (budget now {inv.budget_granted()})."))
     else:
-        # 1 wrap-up call, earmarked for render_verdict — a denial must not strand the case without a
-        # verdict. Granted AT MOST ONCE, and the wrap-up call only mounts the render_verdict tool, so
-        # the budget cannot creep past the denial (a bare instruction doesn't bind the model).
-        inv.add_extension(requested, 1, "denied — 1 wrap-up call granted for render_verdict only",
-                          decided_by="human (denied)" if sys.stdin.isatty() else "auto (non-interactive)")
+        # A denial must not strand the case without a verdict: if nothing is left, grant 1 wrap-up call,
+        # earmarked for render_verdict. Granted AT MOST ONCE, and the wrap-up call only mounts the
+        # render_verdict tool, so the budget cannot creep past the denial (a bare instruction doesn't bind
+        # the model). If the agent pitched early and still has calls, it gets nothing extra.
+        who = who_label if who_label.startswith("auto") else f"{who_label} (denied)"
+        if inv.budget_remaining() == 0:
+            inv.add_extension(requested, 1, "denied — 1 wrap-up call granted for render_verdict only", decided_by=who)
+            print(term.yellow("✘ Denied — the agent gets exactly 1 wrap-up call to render its best-effort verdict."))
+        else:
+            inv.add_extension(requested, 0, "denied — remaining budget must be used to conclude", decided_by=who)
+            print(term.yellow(f"✘ Denied — the agent must conclude with the {inv.budget_remaining()} call(s) it has left."))
         inv.state["wrapup_granted"] = True
-        print(term.yellow("✘ Denied — the agent gets exactly 1 wrap-up call to render its best-effort verdict."))
     inv.state["pending_pitch"] = None
     inv.set_status(STATUS_IN_PROGRESS)
     print(term.rule("═"))
@@ -183,8 +203,8 @@ def _handle_pause(inv: Investigation, pitch: dict | None, phase: str) -> bool:
 
 # ----------------------------- control tools ---------------------------- #
 
-def _handle_budget_request(inv: Investigation, call_id: str, args: dict, phase: str) -> None:
-    granted = _handle_pause(inv, args, phase)
+def _handle_budget_request(inv: Investigation, call_id: str, args: dict, phase: str, decide=None) -> None:
+    granted = _handle_pause(inv, args, phase, decide)
     ext = inv.state["budget"]["extensions"][-1]
     inv.add_log(phase=phase, tool="request_more_budget", args=_public_args(args),
                 reasoning=args.get("reasoning", ""),
@@ -195,8 +215,8 @@ def _handle_budget_request(inv: Investigation, call_id: str, args: dict, phase: 
                      f"Granted +{ext['granted']} calls (budget now {inv.budget_granted()}). Continue the investigation.")
     else:
         _tool_result(inv, call_id, "request_more_budget",
-                     "Denied. You have exactly 1 call left: render_verdict now with your best-supported "
-                     "decision, and list everything unverified in unverified_notes.")
+                     f"Denied. You have exactly {inv.budget_remaining()} call(s) left: render_verdict now with your "
+                     "best-supported decision, and list everything unverified in unverified_notes.")
 
 
 def _calls_this_phase(inv: Investigation) -> int:
@@ -279,7 +299,8 @@ def _handle_verdict(inv: Investigation, call_id: str, args: dict, phase: str) ->
 
 # ------------------------------ the loop -------------------------------- #
 
-def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "initial") -> None:
+def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "initial", decide=None) -> None:
+    """`decide` is the human-in-the-loop channel for budget pauses (terminal prompt by default)."""
     if not inv.messages:
         inv.messages.append({"role": "system", "content": build_system_prompt(inv.full_name)})
         inv.messages.append({"role": "user", "content": build_initial_user(inv.state["intake"])})
@@ -289,7 +310,7 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
 
     # A pause left pending from a previous session (e.g. the process was killed at the prompt).
     if inv.status == STATUS_PAUSED:
-        _handle_pause(inv, inv.state.get("pending_pitch"), phase)
+        _handle_pause(inv, inv.state.get("pending_pitch"), phase, decide)
 
     inv.set_status(STATUS_IN_PROGRESS)
     no_tool_strikes = 0
@@ -333,7 +354,7 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
                 print(term.red("Budget spent and the wrap-up call produced no verdict — hard stop. "
                                f"The material gathered is in the report: {inv.dir / 'report.md'}"))
                 return
-            if _handle_pause(inv, None, phase):
+            if _handle_pause(inv, None, phase, decide):
                 continue
             inv.messages.append({"role": "user", "content":
                                  "[budget controller] Extension denied. You have exactly 1 call: "
@@ -399,7 +420,7 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
             if name == "render_verdict":
                 concluded = _handle_verdict(inv, tc.id, args, phase)
             elif name == "request_more_budget":
-                _handle_budget_request(inv, tc.id, args, phase)
+                _handle_budget_request(inv, tc.id, args, phase, decide)
             elif name in IMPLEMENTATIONS:
                 observation, api_n = dispatch(gh, name, args)
                 entry = inv.add_log(phase=phase, tool=name, args=_public_args(args),

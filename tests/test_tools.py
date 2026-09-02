@@ -55,5 +55,29 @@ class TestClientBodyParsing(unittest.TestCase):
         self.assertIn("Fast, unopinionated", obs)
 
 
+class TestEmptyRepository(unittest.TestCase):
+    """Grace under fire: a repository with no commits answers 409 on /commits and 204 on /contributors.
+    Both must become observations the agent can reason about, never exceptions."""
+
+    def _gh(self):
+        def handler(request):
+            if request.url.path.endswith("/commits"):
+                return httpx.Response(409, json={"message": "Git Repository is empty."})
+            if request.url.path.endswith("/contributors"):
+                return httpx.Response(204)
+            return httpx.Response(404, json={"message": "Not Found"})
+        gh = GitHubClient(cache_dir=None)
+        gh._http = httpx.Client(transport=httpx.MockTransport(handler))
+        return gh
+
+    def test_empty_repo_is_an_observation_not_a_crash(self):
+        from detective.tools.github import list_commits, list_contributors
+        obs, _ = list_commits(self._gh(), {"owner": "o", "repo": "r"})
+        self.assertTrue(obs.startswith("ERROR (empty_repository)"), obs)
+        self.assertIn("empty", obs.lower())
+        obs2, _ = list_contributors(self._gh(), {"owner": "o", "repo": "r"})
+        self.assertIn("no contributors listed", obs2)
+
+
 if __name__ == "__main__":
     unittest.main()

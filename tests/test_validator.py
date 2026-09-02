@@ -81,6 +81,7 @@ class TestEvidenceValidation(unittest.TestCase):
     def test_chat_citations(self):
         self.assertEqual(invalid_citations("see [step 1] and [step 7]", LOG), [7])
         self.assertEqual(invalid_citations("see [step 2]", LOG), [])
+        self.assertEqual(invalid_citations("supported by [steps 1, 2] and [steps 2, 9]", LOG), [9])
 
 
 if __name__ == "__main__":

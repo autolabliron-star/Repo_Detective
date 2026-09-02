@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Repo Detective</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2430; --muted:#66707f; --line:#e3e6eb; --accent:#2f5cff;
+          --ok:#1d8f4a; --warn:#b8770a; --bad:#c92a2a; --note:#6b3fb5; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  header { display:flex; align-items:baseline; gap:12px; padding:14px 22px; background:#fff; border-bottom:1px solid var(--line); }
+  header h1 { margin:0; font-size:18px; }
+  header .sub { color:var(--muted); }
+  main { display:grid; grid-template-columns:300px 1fr 360px; gap:16px; padding:16px 22px; max-width:1700px; margin:0 auto; }
+  @media (max-width:1100px) { main { grid-template-columns:1fr; } }
+  aside, section { min-width:0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:14px; }
+  h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 10px; }
+  input[type=text], input[type=number], input[type=url] { width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:8px; font:inherit; }
+  input[type=number] { width:80px; }
+  button { padding:8px 12px; border:1px solid var(--accent); background:var(--accent); color:#fff; border-radius:8px; font:inherit; cursor:pointer; }
+  button.ghost { background:#fff; color:var(--accent); }
+  button.warn { background:#fff; color:var(--bad); border-color:var(--bad); }
+  button:disabled { opacity:.5; cursor:default; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+  .err { color:var(--bad); margin-top:8px; white-space:pre-wrap; }
+  ul.cases { list-style:none; margin:0; padding:0; }
+  ul.cases li { padding:9px 10px; border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; gap:8px; align-items:center; }
+  ul.cases li:hover { background:#f0f3f8; }
+  ul.cases li.active { background:#e8eeff; }
+  ul.cases .name { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  ul.cases .meta { color:var(--muted); font-size:12px; }
+  .badge { display:inline-block; padding:2px 9px; border-radius:999px; font-size:12px; font-weight:600; border:1px solid transparent; white-space:nowrap; }
+  .b-adopt { background:#e6f6ec; color:var(--ok); border-color:#b9e4c8; }
+  .b-adopt_with_conditions { background:#fff4dc; color:var(--warn); border-color:#f3dba3; }
+  .b-reject { background:#fde8e8; color:var(--bad); border-color:#f5b5b5; }
+  .b-none { background:#eef0f3; color:var(--muted); }
+  .pill { display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px; background:#eef0f3; color:var(--muted); }
+  .pill.live { background:#e8eeff; color:var(--accent); }
+  .pill.paused { background:#fff4dc; color:var(--warn); }
+  .spin { display:inline-block; animation:spin 1.2s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .title { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .title h3 { margin:0; font-size:20px; }
+  .title a { color:inherit; text-decoration:none; }
+  .budget { height:8px; background:#eef0f3; border-radius:4px; overflow:hidden; margin:8px 0 4px; }
+  .budget i { display:block; height:100%; background:var(--accent); }
+  .muted { color:var(--muted); }
+  .verdict-summary { font-size:15px; margin:10px 0; }
+  .evidence li { margin:6px 0; }
+  .quote { display:block; color:var(--muted); font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; white-space:pre-wrap; margin:2px 0 0 18px; }
+  .unverified { color:var(--bad); }
+  .pause { border-color:#f3dba3; background:#fffaf0; }
+  .pause h2 { color:var(--warn); }
+  .call { margin:16px 0 6px; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.06em; border-top:1px dashed var(--line); padding-top:8px; }
+  .phase { margin:18px 0 6px; font-weight:700; color:var(--note); }
+  .step { padding:8px 0; }
+  .step .head { display:flex; gap:8px; flex-wrap:wrap; align-items:baseline; }
+  .step .tool { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-weight:600; }
+  .step .args { color:var(--muted); font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; word-break:break-all; }
+  .step .lead { color:var(--note); font-size:12px; }
+  .step .note { margin:4px 0; color:var(--note); }
+  .step pre { margin:4px 0 0; padding:8px 10px; background:#f3f5f8; border-radius:8px; font-size:12px; white-space:pre-wrap; word-break:break-word; max-height:320px; overflow:auto; }
+  .step.error pre { background:#fdf0f0; }
+  details summary { cursor:pointer; color:var(--accent); font-size:12px; }
+  .chat { display:flex; flex-direction:column; height:calc(100vh - 120px); position:sticky; top:16px; }
+  .chatlog { flex:1; overflow:auto; display:flex; flex-direction:column; gap:10px; padding-right:4px; }
+  .msg { padding:8px 10px; border-radius:10px; white-space:pre-wrap; word-break:break-word; }
+  .msg.you { background:#e8eeff; align-self:flex-end; max-width:92%; }
+  .msg.bot { background:#f3f5f8; }
+  .msg.sys { color:var(--muted); font-size:12px; }
+  .chat form { display:flex; gap:8px; margin-top:10px; }
+  .hint { color:var(--muted); font-size:12px; }
+  .empty { color:var(--muted); padding:40px; text-align:center; }
+  .ledger li { margin:3px 0; }
+  a.step-ref { color:var(--accent); text-decoration:none; font-weight:600; }
+</style>
+</head>
+<body>
+<header><h1>🔍 The Repo Detective</h1><span class="sub">should we build on this repository?</span></header>
+<main>
+  <aside>
+    <div class="card">
+      <h2>New investigation</h2>
+      <form id="newcase">
+        <input id="url" type="text" placeholder="owner/repo or https://github.com/…" required>
+        <div class="row">
+          <label>Budget <input id="budget" type="number" value="30" min="1" max="200"> calls</label>
+          <label><input id="fresh" type="checkbox"> start over</label>
+        </div>
+        <div class="row"><button id="go">Investigate</button><span id="going" class="muted" hidden><span class="spin">⟳</span> intake…</span></div>
+        <div id="formerr" class="err"></div>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Cases</h2>
+      <ul id="cases" class="cases"></ul>
+    </div>
+  </aside>
+
+  <section id="case"><div class="card"><div class="empty">Pick a case on the left, or investigate a repository.</div></div></section>
+
+  <aside id="chatpane" hidden>
+    <div class="card chat">
+      <h2>Chat with the case</h2>
+      <div id="chatlog" class="chatlog"></div>
+      <form id="chatform">
+        <input id="chatmsg" type="text" placeholder='"why did you flag …?"  ·  "now check the biggest fork"' autocomplete="off">
+        <button>Send</button>
+      </form>
+      <div class="hint">Questions are answered from the stored log only, with [step N] citations. Directives send the agent back to work with its remaining budget.</div>
+    </div>
+  </aside>
+</main>
+
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const LEAD_TOOLS = new Set(["get_user", "get_user_events", "osv_query", "list_forks"]);
+  const LABEL = { adopt: "✅ ADOPT", adopt_with_conditions: "⚠️ ADOPT WITH CONDITIONS", reject: "🛑 REJECT" };
+  const STATUS = { in_progress: ["live", "⟳ investigating"], paused_awaiting_budget: ["paused", "⏸ paused — budget decision needed"],
+                   concluded: ["", "concluded"], concluded_without_verdict: ["", "concluded without verdict"] };
+
+  let current = null, lastJSON = "", pollTimer = null, casesTimer = null;
+  const chats = {};  // slug -> [{who, text}]
+
+  async function api(path, body) {
+    const r = await fetch(path, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {});
+    const ct = r.headers.get("content-type") || "";
+    const data = ct.includes("json") ? await r.json() : await r.text();
+    if (!r.ok) throw new Error((data && data.error) || `HTTP ${r.status}`);
+    return data;
+  }
+
+  function badge(decision) {
+    return decision ? `<span class="badge b-${esc(decision)}">${LABEL[decision] || esc(decision)}</span>` : `<span class="badge b-none">no verdict</span>`;
+  }
+  function d10(s) { return s ? String(s).slice(0, 10) : "?"; }
+  function n(x) { return typeof x === "number" ? x.toLocaleString() : "?"; }
+  function stepLinks(text) {  // "[step 7]" and "[steps 2, 3]" → one link per step
+    return esc(text).replace(/\[steps?\s+(\d+(?:\s*,\s*\d+)*)\]/gi, (m, list) =>
+      "[" + list.split(/\s*,\s*/).map(k => `<a class="step-ref" href="#step-${k}">step ${k}</a>`).join(", ") + "]");
+  }
+
+  // ------------------------------ case list ------------------------------ //
+  async function loadCases() {
+    try {
+      const cases = await api("/api/cases");
+      $("#cases").innerHTML = cases.length ? cases.map(c => `
+        <li data-slug="${esc(c.slug)}" class="${c.slug === current ? "active" : ""}">
+          <div style="min-width:0"><div class="name">${esc(c.full_name)}</div>
+            <div class="meta">${c.running ? '<span class="spin">⟳</span> live · ' : ""}${c.error ? "⚠ error · " : ""}${c.budget_used}/${c.budget_granted} calls${c.version > 1 ? ` · v${c.version}` : ""}</div></div>
+          ${badge(c.verdict)}
+        </li>`).join("") : `<li class="muted">No cases yet.</li>`;
+      document.querySelectorAll("#cases li[data-slug]").forEach(li => li.onclick = () => openCase(li.dataset.slug));
+    } catch (e) { /* server restarting — try again on the next tick */ }
+  }
+
+  // ------------------------------ case view ------------------------------ //
+  async function openCase(slug) {
+    current = slug; lastJSON = "";
+    location.hash = slug;
+    $("#chatpane").hidden = false;
+    renderChat();
+    await refresh(true);
+    loadCases();
+  }
+
+  async function refresh(force) {
+    if (!current) return;
+    let d;
+    try { d = await api(`/api/cases/${encodeURIComponent(current)}`); }
+    catch (e) { $("#case").innerHTML = `<div class="card"><div class="err">${esc(e.message)}</div></div>`; return; }
+    const j = JSON.stringify(d);
+    if (force || j !== lastJSON) { lastJSON = j; renderCase(d); }
+    const live = d.running || d.status === "in_progress" || d.status === "paused_awaiting_budget";
+    clearTimeout(pollTimer);
+    if (live) pollTimer = setTimeout(() => refresh(false), 2000);
+    if (d.running && chats[current] && chats[current].pendingRetask && d.version > chats[current].pendingRetask) {
+      chats[current].pendingRetask = 0;
+    }
+  }
+
+  function renderCase(d) {
+    const v = d.verdicts[d.verdicts.length - 1];
+    const [cls, label] = STATUS[d.status] || ["", d.status];
+    const pct = d.budget_granted ? Math.min(100, 100 * d.budget_used / d.budget_granted) : 0;
+    const intake = d.intake || {};
+    const ext = (d.budget.extensions || []);
+
+    let html = `<div class="card">
+      <div class="title"><h3><a href="https://github.com/${esc(d.full_name)}" target="_blank" rel="noopener">${esc(d.full_name)}</a></h3>
+        <span class="pill ${cls}">${d.running && d.status !== "paused_awaiting_budget" ? '<span class="spin">⟳</span> ' : ""}${esc(label)}</span>
+        ${badge(v && v.decision)}
+        <a class="muted" href="/api/cases/${esc(d.slug)}/report" target="_blank">report.md ↗</a>
+        ${!d.running && d.status !== "in_progress" ? `<button class="ghost" id="startover">start over</button>` : ""}
+      </div>
+      <div class="budget"><i style="width:${pct}%"></i></div>
+      <div class="muted">${d.budget_used} of ${d.budget_granted} LLM calls used · ${d.log.length} steps${ext.length ? ` · ${ext.length} budget decision${ext.length > 1 ? "s" : ""}` : ""}</div>
+      ${d.error ? `<div class="err">Run stopped: ${esc(d.error)}</div>` : ""}
+    </div>`;
+
+    if (d.status === "paused_awaiting_budget" && d.pending_pitch) {
+      const p = d.pending_pitch;
+      html += `<div class="card pause"><h2>⏸ The agent asks for more budget${p.exhausted ? " (budget exhausted)" : ""}</h2>
+        <div style="white-space:pre-wrap">${esc(p.argument || "(no argument given)")}</div>
+        ${(p.planned_steps || []).length ? `<ol>${p.planned_steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+        <div class="row">
+          <button id="approve">Approve +${esc(p.calls_requested || 10)}</button>
+          <label>or grant <input id="custom" type="number" min="1" max="100" value="${esc(p.calls_requested || 10)}"></label>
+          <button class="ghost" id="grantcustom">Grant</button>
+          <button class="warn" id="deny">Deny (one wrap-up call to render a verdict)</button>
+        </div></div>`;
+    }
+
+    if (v) {
+      html += `<div class="card"><h2>Verdict${v.version > 1 ? ` · v${v.version} · after re-task “${esc(String(v.trigger).replace(/^retask: /, ""))}”` : ""}${v.confidence ? ` · confidence ${esc(v.confidence)}` : ""}</h2>
+        <div>${badge(v.decision)}</div>
+        <div class="verdict-summary">${esc(v.summary)}</div>
+        ${v.changed_from_previous ? `<p><b>What changed:</b> ${esc(v.changed_from_previous)}</p>` : ""}
+        ${(v.conditions || []).length ? `<p><b>Conditions</b></p><ul>${v.conditions.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
+        <p><b>Evidence</b> <span class="muted">(each item mechanically checked against the log)</span></p>
+        <ul class="evidence">${(v.evidence || []).map(e => `<li>${e.verified ? "✔" : '<span class="unverified">✘ UNVERIFIED</span>'} ${esc(e.claim)}
+            <span class="quote"><a class="step-ref" href="#step-${esc(e.step_id)}">step ${esc(e.step_id)}</a> “${esc(e.data_point)}”</span></li>`).join("")}</ul>
+        ${(v.unverified_notes || []).length ? `<p><b>Could not be verified</b></p><ul>${v.unverified_notes.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+        ${v.validation_passed === false ? `<p class="unverified">Rendered with the budget exhausted; items marked UNVERIFIED failed citation validation.</p>` : ""}
+        ${d.verdicts.length > 1 ? `<p><b>History</b></p><ul>${d.verdicts.map(x => `<li>v${x.version} — ${LABEL[x.decision] || esc(x.decision)} <span class="muted">(${esc(x.trigger)}, at ${x.budget_used_at_render} calls)</span></li>`).join("")}</ul>` : ""}
+      </div>`;
+    } else {
+      html += `<div class="card"><h2>Verdict</h2><div class="muted">${d.status === "concluded_without_verdict" ? "The investigation ended without a verdict — re-task it from the chat." : "Not yet — the investigation is running."}</div></div>`;
+    }
+
+    html += `<div class="card"><h2>The tip-off <span class="muted">(intake — plain code, no LLM)</span></h2>
+      <div>${esc(intake.description || "no description")}</div>
+      <div class="muted">⭐ ${n(intake.stars)} stars · ${n(intake.forks)} forks · ${n(intake.open_issues_and_prs)} open issues+PRs · ${esc(intake.language || "?")} · ${esc(intake.license || "no license")}</div>
+      <div class="muted">created ${d10(intake.created_at)} · last push ${d10(intake.pushed_at)} · ${esc(intake.release_note || "")}</div>
+      ${(intake.top_contributors || []).length ? `<div class="muted">top contributors: ${intake.top_contributors.slice(0, 5).map(c => `${esc(c.login)} (${c.share_pct}%)`).join(", ")}</div>` : ""}
+      ${intake.renamed_from ? `<div>⚠️ renamed: <b>${esc(intake.renamed_from)}</b> → <b>${esc(d.full_name)}</b></div>` : ""}
+      ${(intake.warnings || []).map(w => `<div>⚠️ ${esc(w)}</div>`).join("")}
+    </div>`;
+
+    html += `<div class="card"><h2>The investigation <span class="muted">— one LLM call can batch several tool calls</span></h2>`;
+    let call = null, phase = null, prev = null;
+    for (const e of d.log) {
+      if (e.phase !== phase) { phase = e.phase; if (phase !== "initial") html += `<div class="phase">↩︎ Re-tasked: “${esc(String(phase).replace(/^retask: /, ""))}”</div>`; }
+      if (e.call != null && e.call !== call) { call = e.call; html += `<div class="call">LLM call ${call}</div>`; }
+      const owner = e.args && e.args.owner;
+      const lead = LEAD_TOOLS.has(e.tool) || (owner && `${owner}/${e.args.repo || ""}`.toLowerCase() !== d.full_name.toLowerCase());
+      const lines = String(e.observation || "").split("\n");
+      const head = lines.slice(0, 4).join("\n"), rest = lines.slice(4).join("\n");
+      const sameNote = prev && prev.reasoning === e.reasoning && prev.call === e.call;
+      html += `<div class="step ${e.error ? "error" : ""}" id="step-${e.id}">
+        <div class="head"><b>Step ${e.id}</b> <span class="tool">${esc(e.tool)}</span> <span class="args">${esc(JSON.stringify(e.args || {}))}</span>${lead ? `<span class="lead">← following a lead beyond the repo</span>` : ""}</div>
+        ${e.reasoning ? `<div class="note">🗒 ${sameNote ? `<span class="muted">(same note as step ${prev.id})</span>` : esc(e.reasoning)}</div>` : ""}
+        <pre>${e.error ? "⚠️ " : ""}${esc(head)}${rest ? `\n<details><summary>${lines.length - 4} more lines</summary>${esc(rest)}</details>` : ""}</pre>
+      </div>`;
+      prev = e;
+    }
+    if (!d.log.length) html += `<div class="muted">No steps yet.</div>`;
+    html += `</div>`;
+
+    html += `<div class="card"><h2>Budget ledger</h2><ul class="ledger">
+      <li>Initial budget ${d.budget.initial} LLM calls · used ${d.budget_used} · remaining ${Math.max(0, d.budget_granted - d.budget_used)}</li>
+      <li>${d.log.length} steps in ${d.budget_used} calls (a call that batches N tools produces N steps but costs 1)</li>
+      ${ext.map(x => `<li>Extension: requested ${x.requested}, granted ${x.granted} (${esc(x.decided_by)}) — “${esc(String(x.argument || "").slice(0, 140))}”</li>`).join("")}
+    </ul></div>`;
+
+    $("#case").innerHTML = html;
+    const so = $("#startover"); if (so) so.onclick = () => startInvestigation(d.full_name, null, true);
+    const ap = $("#approve"); if (ap) ap.onclick = () => decide(d.pending_pitch.calls_requested || 10);
+    const gc = $("#grantcustom"); if (gc) gc.onclick = () => decide(parseInt($("#custom").value || "0", 10));
+    const dn = $("#deny"); if (dn) dn.onclick = () => decide(0);
+  }
+
+  async function decide(granted) {
+    try { await api(`/api/cases/${encodeURIComponent(current)}/budget`, { granted }); sys(granted > 0 ? `You granted +${granted} calls.` : "You denied the extension — the agent gets one wrap-up call."); refresh(true); }
+    catch (e) { sys(`Could not record the decision: ${e.message}`); }
+  }
+
+  // ------------------------------ new case ------------------------------ //
+  async function startInvestigation(url, budget, fresh) {
+    $("#formerr").textContent = ""; $("#go").disabled = true; $("#going").hidden = false;
+    try {
+      const r = await api("/api/investigate", { url, budget, fresh });
+      await openCase(r.slug);
+    } catch (e) { $("#formerr").textContent = e.message; }
+    finally { $("#go").disabled = false; $("#going").hidden = true; }
+  }
+  $("#newcase").onsubmit = (ev) => { ev.preventDefault(); startInvestigation($("#url").value.trim(), parseInt($("#budget").value || "30", 10), $("#fresh").checked); };
+
+  // -------------------------------- chat -------------------------------- //
+  function sys(text) { (chats[current] ||= []).push({ who: "sys", text }); renderChat(); }
+  function renderChat() {
+    const log = chats[current] || [];
+    $("#chatlog").innerHTML = log.length ? log.map(m => `<div class="msg ${m.who}">${m.who === "bot" ? stepLinks(m.text) : esc(m.text)}</div>`).join("")
+      : `<div class="msg sys">Ask “why did you flag the maintainer situation?” or send the agent back to work: “now check the biggest fork”.</div>`;
+    $("#chatlog").scrollTop = $("#chatlog").scrollHeight;
+  }
+  $("#chatform").onsubmit = async (ev) => {
+    ev.preventDefault();
+    const text = $("#chatmsg").value.trim(); if (!text || !current) return;
+    $("#chatmsg").value = "";
+    (chats[current] ||= []).push({ who: "you", text }); renderChat();
+    const slug = current;
+    (chats[slug]).push({ who: "sys", text: "…" }); renderChat();
+    try {
+      const r = await api(`/api/cases/${encodeURIComponent(slug)}/chat`, { message: text });
+      chats[slug].pop();
+      chats[slug].push({ who: r.kind === "answer" ? "bot" : "sys", text: r.text });
+      if (r.kind === "retask") { setTimeout(() => refresh(true), 800); }
+    } catch (e) { chats[slug].pop(); chats[slug].push({ who: "sys", text: `Error: ${e.message}` }); }
+    renderChat();
+  };
+
+  // -------------------------------- boot -------------------------------- //
+  const initial = decodeURIComponent(location.hash.replace(/^#/, ""));
+  if (initial) openCase(initial);
+  loadCases().then(() => {  // no hash: open the most recent case so the page never starts empty
+    if (!current) { const first = document.querySelector("#cases li[data-slug]"); if (first) openCase(first.dataset.slug); }
+  });
+  casesTimer = setInterval(loadCases, 5000);
+})();
+</script>
+</body>
+</html>

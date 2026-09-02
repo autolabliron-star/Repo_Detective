@@ -3,6 +3,7 @@
   investigate <url> [--budget N] [--fresh]   run an investigation
   chat <owner/repo | url>                    chat over a finished one / re-task it
   list                                       show stored investigations
+  serve [--host H] [--port P]                web UI (what `docker compose up` runs)
 """
 
 from __future__ import annotations
@@ -25,13 +26,15 @@ INVESTIGATIONS_ROOT = Path(os.environ.get("INVESTIGATIONS_DIR", "investigations"
 BANNER = """
 🔍 The Repo Detective — should we build on this repository?
 
+  web UI (case files, live logs, budget approvals, chat):
+                        detective serve            → http://localhost:8000
   investigate a repo:   detective investigate https://github.com/expressjs/express
   chat / re-task:       detective chat expressjs/express
   stored cases:         detective list
 
 Environment: OPENAI_API_KEY, OPENAI_MODEL required; OPENAI_BASE_URL for any
 OpenAI-compatible provider; GITHUB_TOKEN optional (raises the API rate limit).
-(under docker: docker compose run --rm detective <command>)
+(under docker: `docker compose up` serves the web UI; `docker compose run --rm detective <command>` for the CLI)
 """
 
 
@@ -96,6 +99,12 @@ def cmd_chat(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_serve(args: argparse.Namespace) -> int:
+    llm = LLMClient()  # fail fast on missing env before opening the port
+    from .web import serve
+    return serve(args.host, args.port, INVESTIGATIONS_ROOT, llm, default_budget=_default_budget())
+
+
 def cmd_list(_args: argparse.Namespace) -> int:
     stored = Investigation.list_all(INVESTIGATIONS_ROOT)
     if not stored:
@@ -138,6 +147,11 @@ def main(argv: list[str] | None = None) -> int:
 
     p_list = sub.add_parser("list", help="list stored investigations")
     p_list.set_defaults(fn=cmd_list)
+
+    p_srv = sub.add_parser("serve", help="web UI: case files, live logs, budget approvals, chat")
+    p_srv.add_argument("--host", default="0.0.0.0")
+    p_srv.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8000") or 8000))
+    p_srv.set_defaults(fn=cmd_serve)
 
     args = parser.parse_args(argv)
     try:
