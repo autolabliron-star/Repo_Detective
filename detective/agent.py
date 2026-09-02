@@ -250,8 +250,22 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
 
     inv.set_status(STATUS_IN_PROGRESS)
     no_tool_strikes = 0
+    single_call_streak = 0
 
     while True:
+        # Mid-case checkpoint: at half budget, make the agent name its working verdict and the one open
+        # question — the second half goes to what could change the verdict, not to completing a checklist.
+        half = inv.state["budget"]["initial"] // 2
+        if (half > 2 and inv.budget_remaining() == half and not inv.state.get("wrapup_granted")
+                and inv.state.get("checkpoint_at") != inv.budget_granted()):
+            inv.state["checkpoint_at"] = inv.budget_granted()
+            inv.messages.append({"role": "user", "content":
+                                 "[budget controller] Half the budget is spent. In your next case note state your "
+                                 "working verdict and the single open question that could still change it, then pursue "
+                                 "only that — batching independent lookups into one response. If nothing could change "
+                                 "it, render_verdict now."})
+            inv.save()
+
         # Reserved pitch: with 2 calls left, force the choice (once per grant level).
         if inv.budget_remaining() == 2 and inv.state.get("nudged_at") != inv.budget_granted():
             inv.state["nudged_at"] = inv.budget_granted()
@@ -312,6 +326,8 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
             inv.save()
             continue
         no_tool_strikes = 0
+        investigative = [tc for tc in msg.tool_calls if tc.function.name in IMPLEMENTATIONS]
+        single_call_streak = single_call_streak + 1 if len(investigative) == 1 else 0
 
         concluded = False
         for tc in msg.tool_calls:
@@ -355,6 +371,12 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
         if inv.messages[-1].get("role") == "tool":
             inv.messages[-1]["content"] += (f"\n\n[budget: {inv.budget_used()}/{inv.budget_granted()} LLM calls used "
                                             f"— {inv.budget_remaining()} remaining]")
+            if single_call_streak >= 3:
+                single_call_streak = 0
+                inv.messages[-1]["content"] += ("\n[controller: three responses in a row carried a single tool call. "
+                                                "Each response costs one budget call regardless of how many tools it "
+                                                "invokes — batch independent lookups (several list_commits / get_user "
+                                                "at once) into ONE response.]")
             quota = gh.quota() if hasattr(gh, "quota") else {}
             left = quota.get("remaining")
             if not quota.get("authenticated") and isinstance(left, int) and left < 15:

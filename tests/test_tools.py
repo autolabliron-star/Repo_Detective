@@ -4,6 +4,9 @@ a JSON file rendered as a Python dict repr, and a case-sensitive 404 (`README.md
 
 import unittest
 
+import httpx
+
+from detective.github_client import GitHubClient
 from detective.tools.github import get_file
 
 
@@ -34,6 +37,22 @@ class TestGetFile(unittest.TestCase):
         self.assertIn("Did you mean Readme.md", obs)
         self.assertIn("Directory '/' contains: Readme.md, package.json, lib", obs)
         self.assertEqual(n, 2)
+
+
+class TestClientBodyParsing(unittest.TestCase):
+    def test_raw_markdown_is_text_despite_json_media_type(self):
+        """Regression: GitHub labels raw file contents 'application/vnd.github.raw+json' even for
+        Markdown; parsing that as JSON crashed get_file on every README in the first live run."""
+        def handler(request):
+            return httpx.Response(200, content=b"# Express\n\nFast, unopinionated",
+                                  headers={"content-type": "application/vnd.github.raw+json; charset=utf-8"})
+        gh = GitHubClient(cache_dir=None)
+        gh._http = httpx.Client(transport=httpx.MockTransport(handler))
+        res = gh.get("/repos/o/r/contents/Readme.md", accept="application/vnd.github.raw+json")
+        self.assertTrue(res["ok"])
+        self.assertEqual(res["data"], "# Express\n\nFast, unopinionated")
+        obs, _ = get_file(gh, {"owner": "o", "repo": "r", "path": "Readme.md"})
+        self.assertIn("Fast, unopinionated", obs)
 
 
 if __name__ == "__main__":

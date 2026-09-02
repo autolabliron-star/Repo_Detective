@@ -101,8 +101,7 @@ class GitHubClient:
                 "api_requests": 1,
             }
         if resp.status_code in (200, 201):
-            ctype = resp.headers.get("content-type", "")
-            body = resp.json() if "json" in ctype else resp.text
+            body = self._parse_body(resp, accept)
             final_url = str(resp.url)
             self._cache_write(url, params, accept, resp.headers.get("etag"), body, final_url)
             return {
@@ -118,6 +117,20 @@ class GitHubClient:
         return {"ok": False, **self._error_for(resp), "api_requests": 1}
 
     # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _parse_body(resp: httpx.Response, accept: str | None):
+        """File contents requested with a raw media type come back labelled
+        'application/vnd.github.raw+json' even when they are Markdown — treat raw as text.
+        Everything else is JSON, but a parse failure degrades to text rather than raising."""
+        if accept and "raw" in accept:
+            return resp.text
+        if "json" in resp.headers.get("content-type", ""):
+            try:
+                return resp.json()
+            except ValueError:
+                return resp.text
+        return resp.text
 
     def quota(self) -> dict:
         return {
