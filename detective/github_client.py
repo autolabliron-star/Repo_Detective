@@ -142,7 +142,7 @@ class GitHubClient:
 
     def quota_line(self) -> str:
         if self.quota_remaining is None:
-            return "GitHub quota: unknown"
+            return "GitHub quota: not observed yet (every request so far was answered from the local cache)"
         kind = "authenticated" if self.authenticated else "anonymous"
         line = f"GitHub {kind} quota: {self.quota_remaining} requests left"
         if self.quota_reset:
