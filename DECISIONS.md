@@ -29,6 +29,16 @@ frameworks hide. Design choices that matter:
   and the model is told to *compress*. Second: a case-sensitive 404 (`README.md` vs `Readme.md`)
   became the finding "no README" — so a 404 now lists the directory. Tools must not manufacture
   anomalies.
+- **Lessons from the second live run and the model switch.** Express concluded at call 29/30 and
+  the verdict was rejected: one quote elided the middle of a long tool result with "..." — a
+  *correct* citation the substring check couldn't read. The validator now accepts "..."-joined
+  fragments when each is verbatim and in order (≥5 chars each, ≥10 total): still mechanical, and
+  the model no longer has to paste whole paragraphs. Moving to a reasoning model surfaced two
+  client-side hazards: hidden reasoning tokens spend the same output cap as the visible answer
+  (the client adds headroom, and a cap eaten entirely by reasoning is retried once, uncounted),
+  and OpenAI's chat/completions endpoint refuses function tools unless `reasoning_effort` is an
+  explicit `none` — the client learns that from the first 400 and keeps going, so a run survives
+  any model switch without configuration.
 - **Evidence over memory, mechanically:** the LLM knows these repos' folklore, so prompting
   "don't use memory" isn't enough. Every evidence item must quote the cited step's output
   *verbatim*; a whitespace-normalized substring check rejects anything else and the agent must

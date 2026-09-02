@@ -42,6 +42,42 @@ class TestEvidenceValidation(unittest.TestCase):
         errors, _ = check_evidence([], LOG)
         self.assertIn("empty", errors[0])
 
+    # --- elisions: "start ... end" is accepted when every fragment is verbatim and in order ---
+
+    def test_ellipsis_fragments_in_order_pass(self):
+        errors, annotated = check_evidence(
+            [{"claim": "critical CVE", "step_id": 2,
+              "data_point": "OSV: 2 known vulnerabilities ... [CVSS3 9.8]"}], LOG)
+        self.assertEqual(errors, [])
+        self.assertTrue(annotated[0]["verified"])
+
+    def test_unicode_and_bracketed_ellipses_pass(self):
+        for quote in ("OSV: 2 known vulnerabilities … CVE-2022-23812",
+                      "OSV: 2 known vulnerabilities [...] CVE-2022-23812",
+                      "OSV: 2 known vulnerabilities (...) CVE-2022-23812"):
+            errors, _ = check_evidence([{"claim": "cve", "step_id": 2, "data_point": quote}], LOG)
+            self.assertEqual(errors, [], quote)
+
+    def test_fragments_out_of_order_rejected(self):
+        errors, annotated = check_evidence(
+            [{"claim": "cve", "step_id": 2, "data_point": "[CVSS3 9.8] ... OSV: 2 known vulnerabilities"}], LOG)
+        self.assertEqual(len(errors), 1)
+        self.assertFalse(annotated[0]["verified"])
+        self.assertIn("in order", errors[0])
+
+    def test_fabricated_fragment_rejected(self):
+        errors, _ = check_evidence(
+            [{"claim": "protestware", "step_id": 2,
+              "data_point": "OSV: 2 known vulnerabilities ... protestware shipped"}], LOG)
+        self.assertEqual(len(errors), 1)
+        self.assertIn('fragment "protestware shipped"', errors[0])
+
+    def test_fragment_too_short_rejected(self):
+        errors, _ = check_evidence(
+            [{"claim": "cve", "step_id": 2, "data_point": "OSV: 2 known vulnerabilities ... 9.8"}], LOG)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("too short", errors[0])
+
     def test_chat_citations(self):
         self.assertEqual(invalid_citations("see [step 1] and [step 7]", LOG), [7])
         self.assertEqual(invalid_citations("see [step 2]", LOG), [])

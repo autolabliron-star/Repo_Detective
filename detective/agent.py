@@ -103,11 +103,15 @@ def _stream_call_header(inv: Investigation, msg, finish: str | None, wrapup: boo
     print(f"\n{term.dim('── ' + label)}")
 
 
-def _stream_step(entry: dict) -> None:
+def _stream_step(entry: dict, prev: dict | None = None) -> None:
     args_str = json.dumps(_public_args(entry["args"]), ensure_ascii=False)
     print(f"\n{term.bold('Step ' + str(entry['id']))} · {term.cyan(entry['tool'])} {term.dim(args_str)}")
     if entry["reasoning"]:
-        print(f"  {term.magenta('🗒')} {entry['reasoning']}")
+        if prev and prev.get("reasoning") == entry["reasoning"] and prev.get("call") == entry.get("call"):
+            same = f"(same note as step {prev['id']})"
+            print(f"  {term.magenta('🗒')} {term.dim(same)}")
+        else:
+            print(f"  {term.magenta('🗒')} {entry['reasoning']}")
     first_line = (entry["observation"] or "").splitlines()[0][:140] if entry["observation"] else ""
     marker = term.red("⚠ ") if entry["error"] else ""
     print(f"  {marker}{term.dim('→')} {first_line}")
@@ -195,13 +199,52 @@ def _handle_budget_request(inv: Investigation, call_id: str, args: dict, phase: 
                      "decision, and list everything unverified in unverified_notes.")
 
 
+def _calls_this_phase(inv: Investigation) -> int:
+    last = inv.latest_verdict()
+    return inv.budget_used() - (last["budget_used_at_render"] if last else 0)
+
+
+def _early_review(inv: Investigation, call_id: str, args: dict, phase: str) -> bool:
+    """Senior review before an early close — mechanical, once per phase. An agent that concludes after a
+    handful of calls with anomalies still on the table (a malicious-code record, a dominant maintainer, a
+    history that doesn't match the package) gets the verdict handed back once: name each anomaly and say
+    whether it was pursued. Generic on purpose — no repo knowledge, just what a lead analyst asks."""
+    threshold = inv.state["budget"]["initial"] // 5
+    if (phase != "initial"  # a re-task is a specific directive from the tech lead — answer it, don't re-audit
+            or inv.state.get("early_review_phase") == phase or inv.state.get("wrapup_granted")
+            or inv.budget_remaining() == 0 or _calls_this_phase(inv) > threshold):
+        return False
+    inv.state["early_review_phase"] = phase
+    n = _calls_this_phase(inv)
+    review = (f"[senior review] Not accepted yet — you are closing after {n} call(s) with {inv.budget_remaining()} "
+              f"of {inv.budget_granted()} unused. Before a verdict this early: list every anomaly your case notes "
+              "raised (malicious-code or hidden-functionality records, a dominant or vanished maintainer, a "
+              "repository history that doesn't match the package, unanswered security reports) and say whether "
+              "each was pursued to a named author and outcome. Pursue the unpursued ones now — batch the lookups — "
+              "then render again. If there is truly nothing left to pursue, render again and say so in the summary.")
+    inv.add_log(phase=phase, tool="render_verdict", args={"decision": args.get("decision")},
+                reasoning=args.get("reasoning", ""),
+                observation=f"SENIOR REVIEW: verdict ({args.get('decision')}) handed back for a second look after "
+                            f"{n} call(s) — anomalies must be pursued or explicitly closed before concluding",
+                api_requests=0, error=None)
+    print(term.yellow(f"  ⟲ senior review: {args.get('decision')} after {n} call(s) handed back — pursue the open leads first"))
+    _tool_result(inv, call_id, "render_verdict", review)
+    return True
+
+
 def _handle_verdict(inv: Investigation, call_id: str, args: dict, phase: str) -> bool:
     """Returns True when the verdict is accepted."""
     errors, annotated = check_evidence(args.get("evidence"), inv.log)
     if args.get("decision") == "adopt_with_conditions" and not args.get("conditions"):
         errors.append("decision is adopt_with_conditions but conditions[] is empty — state the conditions")
 
+    # One feedback at a time: citation problems first; the senior review only sees a verdict that would
+    # otherwise be accepted, so the model never has to fix two different things in one re-render.
+    if not errors and _early_review(inv, call_id, args, phase):
+        return False
+
     if errors and inv.budget_remaining() > 0:
+        print(term.yellow(f"  ✘ verdict rejected — {len(errors)} evidence problem(s); the agent must re-cite verbatim"))
         inv.add_log(phase=phase, tool="render_verdict", args={"decision": args.get("decision")},
                     reasoning=args.get("reasoning", ""),
                     observation="VALIDATION FAILED: " + " | ".join(errors),
@@ -330,6 +373,7 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
         single_call_streak = single_call_streak + 1 if len(investigative) == 1 else 0
 
         concluded = False
+        prev_entry: dict | None = None
         for tc in msg.tool_calls:
             name = tc.function.name
             try:
@@ -361,7 +405,8 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
                 entry = inv.add_log(phase=phase, tool=name, args=_public_args(args),
                                     reasoning=args.get("reasoning", ""), observation=observation,
                                     api_requests=api_n, error=_extract_error(observation))
-                _stream_step(entry)
+                _stream_step(entry, prev_entry)
+                prev_entry = entry
                 _tool_result(inv, tc.id, name, f"[step {entry['id']}]\n{observation}")
             else:
                 _tool_result(inv, tc.id, name, f"ERROR (unknown_tool): no tool named '{name}'.")

@@ -15,7 +15,9 @@ from . import osv as osv_tools
 REASONING = {
     "type": "string",
     "description": ("Case notes, required: what the last finding was and why this step is next. "
-                    "One or two terse sentences — this goes verbatim into the investigation log a human reads."),
+                    "One or two terse sentences — this goes verbatim into the investigation log a human reads. "
+                    "When batching several calls in one response, each call's note says what THAT call is for; "
+                    "never repeat one note across the batch."),
 }
 
 _OWNER = {"type": "string", "description": "Repository owner login. Explicit on purpose — point tools at any repo (e.g. a fork)."}
@@ -121,7 +123,8 @@ TOOL_SPECS: list[dict] = [
           }, ["argument", "planned_steps", "calls_requested"], repo_scoped=False)),
     _tool("render_verdict",
           "Conclude the investigation. Evidence is validated mechanically: each data_point must be a "
-          "VERBATIM quote from the cited step's result — paraphrases are rejected and returned to you.",
+          "VERBATIM quote from the cited step's result — paraphrases are rejected and returned to you. "
+          "To skip the middle of a long result write 'start ... end': every fragment verbatim, in order.",
           _schema({
               "decision": {"type": "string", "enum": ["adopt", "adopt_with_conditions", "reject"]},
               "summary": {"type": "string", "description": "The story of the case in one short paragraph."},
@@ -133,7 +136,8 @@ TOOL_SPECS: list[dict] = [
                       "properties": {
                           "claim": {"type": "string", "description": "The factual claim supporting the verdict."},
                           "step_id": {"type": "integer", "description": "Log step where this was observed."},
-                          "data_point": {"type": "string", "description": "Verbatim quote (10+ chars) copied from that step's tool result."},
+                          "data_point": {"type": "string", "description": "Verbatim quote (10+ chars) copied from that step's tool result. "
+                                                        "'...' may join verbatim fragments (5+ chars each) in the order they appear."},
                       },
                       "required": ["claim", "step_id", "data_point"],
                   },

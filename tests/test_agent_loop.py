@@ -190,6 +190,36 @@ class TestAgentLoop(unittest.TestCase):
         self.assertEqual([e["call"] for e in inv.log], [1, 2, 3])
         self.assertIn("LLM call 2", (inv.dir / "report.md").read_text())
 
+    def test_early_conclusion_gets_senior_review_once(self):
+        """A verdict after a handful of calls is handed back once (pursue the open leads), then accepted."""
+        inv = make_inv(budget=30)  # threshold: 30 // 5 = 6 calls
+        verdict = {"reasoning": "case closed", "decision": "adopt", "summary": "fine",
+                   "evidence": [{"claim": "solo dominates", "step_id": 1, "data_point": VERBATIM}]}
+        script = [
+            FakeMsg(tool_calls=[FakeToolCall(1, "list_contributors",
+                                             {"reasoning": "start", "owner": "acme", "repo": "widget"})]),
+            FakeMsg(tool_calls=[FakeToolCall(2, "render_verdict", verdict)]),   # too early -> handed back
+            FakeMsg(tool_calls=[FakeToolCall(3, "render_verdict", verdict)]),   # second render -> accepted
+        ]
+        run_investigation(inv, FakeLLM(script), FakeGH())
+
+        self.assertEqual(inv.status, STATUS_CONCLUDED)
+        reviews = [e for e in inv.log if "SENIOR REVIEW" in e["observation"]]
+        self.assertEqual(len(reviews), 1)
+        handed_back = [m for m in inv.messages if m["role"] == "tool" and "[senior review]" in m["content"]]
+        self.assertEqual(len(handed_back), 1)
+        self.assertEqual(inv.budget_used(), 3)
+        self.assertEqual(inv.latest_verdict()["decision"], "adopt")
+        # small budgets skip the review entirely (threshold 5 // 5 = 1, and a render at call 2 is past it)
+        inv2 = make_inv(budget=5)
+        run_investigation(inv2, FakeLLM([
+            FakeMsg(tool_calls=[FakeToolCall(1, "list_contributors",
+                                             {"reasoning": "start", "owner": "acme", "repo": "widget"})]),
+            FakeMsg(tool_calls=[FakeToolCall(2, "render_verdict", verdict)]),
+        ]), FakeGH())
+        self.assertEqual(inv2.budget_used(), 2)
+        self.assertEqual(inv2.status, STATUS_CONCLUDED)
+
     def test_resume_repairs_interrupted_history(self):
         inv = make_inv(budget=3)
         # simulate dying between the assistant message and its tool results

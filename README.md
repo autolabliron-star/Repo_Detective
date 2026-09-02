@@ -21,8 +21,10 @@ docker compose run --rm detective chat expressjs/express
 > which needs an interactive terminal. `run` allocates one; `up` just prints usage.
 
 Works with **any OpenAI-compatible provider**: set `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and
-`OPENAI_MODEL` in `.env` — no vendor or model is hardcoded. No other keys or accounts are
-needed (an optional `GITHUB_TOKEN` raises the GitHub rate limit, but everything runs without it).
+`OPENAI_MODEL` in `.env` — no vendor or model is hardcoded. Reasoning models may take an optional
+`OPENAI_REASONING_EFFORT`; the client adapts by itself when a provider rejects a parameter. No other
+keys or accounts are needed (an optional `GITHUB_TOKEN` raises the GitHub rate limit, but everything
+runs without it).
 
 ### Running without Docker
 

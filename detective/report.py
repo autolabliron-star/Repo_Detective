@@ -100,6 +100,7 @@ def render_markdown(inv: Investigation) -> str:
               "each call is marked below._", ""]
     current_phase = None
     current_call = None
+    prev_entry: dict | None = None
     for entry in inv.log:
         if entry["phase"] != current_phase:
             current_phase = entry["phase"]
@@ -112,7 +113,12 @@ def render_markdown(inv: Investigation) -> str:
         lead = "  ← *following a lead beyond the repo*" if _is_lead(inv, entry) else ""
         lines.append(f"**Step {entry['id']}** · `{entry['tool']}{args_str}`{lead}")
         if entry.get("reasoning"):
-            lines.append(f"> 🗒 _{entry['reasoning']}_")
+            if (prev_entry and prev_entry.get("reasoning") == entry["reasoning"]
+                    and prev_entry.get("call") == entry.get("call")):
+                lines.append(f"> 🗒 _(same note as step {prev_entry['id']})_")
+            else:
+                lines.append(f"> 🗒 _{entry['reasoning']}_")
+        prev_entry = entry
         obs = entry.get("observation") or ""
         head = "\n".join(obs.splitlines()[:6])
         more = len(obs.splitlines()) - 6
