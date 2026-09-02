@@ -47,7 +47,7 @@ rendered by plain code so nothing un-cited can sneak into the artifact.
 
 ## Cut for time
 
-Live streaming to the browser (the page polls every 2 s instead); GitHub code search
+Pushing the investigation log to the browser live (the page polls every 2 s; chat answers do stream); GitHub code search
 (auth-required); `/stats/contributors` (async-202 dance); commit-signature and dependency-tree
 analysis; caching OSV responses; naming the compromised publisher in node-ipc (the API doesn't
 expose npm publish identities).
