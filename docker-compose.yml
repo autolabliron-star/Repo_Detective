@@ -20,3 +20,7 @@ services:
       - DETECTIVE_BUDGET=${DETECTIVE_BUDGET:-}
     volumes:
       - ./investigations:/app/investigations
+    # Lets OPENAI_BASE_URL=http://host.docker.internal:<port>/v1 reach a local model on Linux
+    # too (Docker Desktop on macOS/Windows resolves the name by itself).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

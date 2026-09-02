@@ -7,9 +7,18 @@ evidence-backed verdict: **adopt** / **adopt with conditions** / **reject**.
 ## Quickstart (Docker, ~2 minutes)
 
 ```bash
-cp .env.example .env      # put your LLM API key + model in it (the only setup)
+cp .env.example .env      # your LLM API key + model — the only required setup
 docker compose up         # → open http://localhost:8000
 ```
+
+- **Running all three test repositories within one hour?** Add a free `GITHUB_TOKEN` (no scopes)
+  to `.env`. GitHub allows 60 anonymous API requests per hour and one investigation uses 25–45,
+  so without a token the third run hits the limit — the agent then concludes on what it could
+  verify and says what it couldn't (see *Grace under fire*). The token is optional; nothing else
+  needs an account.
+- **Port 8000 taken?** `DETECTIVE_PORT=8001 docker compose up`
+- **Local model (Ollama, vLLM, LM Studio)?** From inside Docker the host is
+  `host.docker.internal`, not `localhost` — e.g. `OPENAI_BASE_URL=http://host.docker.internal:11434/v1`.
 
 The web UI is where you investigate a repository, watch the log grow live, approve or deny the
 agent's budget requests, read the case file, and chat with it. The same case files are one
@@ -20,11 +29,6 @@ docker compose run --rm detective investigate https://github.com/expressjs/expre
 docker compose run --rm detective chat expressjs/express                              # one to start the chat
 docker compose run --rm detective list
 ```
-
-> GitHub's anonymous API limit is 60 requests/hour and an investigation uses 15–40. Running all
-> three test repositories in one sitting will hit it on the third; a free `GITHUB_TOKEN` (no scopes)
-> in `.env` lifts the limit to 5,000/hour. Without one, the agent notices the limit and concludes
-> on what it could verify — see *Grace under fire* below.
 
 Works with **any OpenAI-compatible provider**: set `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and
 `OPENAI_MODEL` in `.env` — no vendor or model is hardcoded. The client adapts at runtime to what
