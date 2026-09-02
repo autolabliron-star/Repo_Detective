@@ -75,6 +75,51 @@ class TestWebApi(unittest.TestCase):
         self.assertEqual(self._post(f"/api/cases/{inv.slug}/budget", {"granted": 3})[0], 409)
 
 
+class StreamingLLM:
+    """Classifier answers QUESTION; the grounded answer arrives in fragments, like a real endpoint."""
+    fragments = ["The verdict ", "was adopt ", "because the log says so."]
+
+    def complete(self, messages, tools=None, budget=None, max_tokens=8192, tool_choice=None):
+        return FakeMsg(content="QUESTION")
+
+    def stream(self, messages, max_tokens=8192):
+        yield from self.fragments
+
+
+class TestChatStreaming(unittest.TestCase):
+    def setUp(self):
+        self.root = Path(tempfile.mkdtemp())
+        self.inv = Investigation.create(self.root, INTAKE, budget_initial=5)
+        self.hub = Hub(self.root, llm=StreamingLLM(), gh_factory=NotFoundGH)
+        self.httpd = make_server("127.0.0.1", 0, self.hub)
+        self.base = f"http://127.0.0.1:{self.httpd.server_address[1]}"
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+
+    def tearDown(self):
+        self.httpd.shutdown()
+        self.httpd.server_close()
+
+    def _post_raw(self, path, body):
+        req = urllib.request.Request(self.base + path, data=json.dumps(body).encode(),
+                                     headers={"Content-Type": "application/json"}, method="POST")
+        with urllib.request.urlopen(req) as r:
+            return r.headers.get("Content-Type", ""), r.read().decode()
+
+    def test_stream_endpoint_sends_the_answer_as_events(self):
+        ctype, raw = self._post_raw(f"/api/cases/{self.inv.slug}/chat/stream", {"message": "why adopt?"})
+        self.assertTrue(ctype.startswith("text/event-stream"))
+        events = [json.loads(f[len("data: "):]) for f in raw.split("\n\n") if f.startswith("data: ")]
+        kinds = [e["kind"] for e in events]
+        self.assertEqual(kinds[0], "start")
+        self.assertEqual(kinds[-1], "done")
+        self.assertEqual([e["text"] for e in events if e["kind"] == "delta"], StreamingLLM.fragments)
+
+    def test_one_shot_endpoint_returns_the_same_text_joined(self):
+        ctype, raw = self._post_raw(f"/api/cases/{self.inv.slug}/chat", {"message": "why adopt?"})
+        self.assertIn("json", ctype)
+        self.assertEqual(json.loads(raw), {"kind": "answer", "text": "".join(StreamingLLM.fragments)})
+
+
 class TestWebDecider(unittest.TestCase):
     def test_approval_from_the_page_extends_the_budget(self):
         inv = Investigation.create(Path(tempfile.mkdtemp()), INTAKE, budget_initial=1)

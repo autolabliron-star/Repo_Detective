@@ -91,7 +91,8 @@ python -m detective chat request/request
 you> why did you flag the maintainer situation?
 ```
 Answered **from the stored log** — the Q&A path doesn't even have GitHub tools mounted — with
-`[step N]` citations validated against the log. If it wasn't investigated, it says so.
+`[step N]` citations validated against the log. If it wasn't investigated, it says so. Answers
+stream word by word as the model writes them, in the terminal and in the web UI alike.
 
 ```
 you> now check the biggest fork

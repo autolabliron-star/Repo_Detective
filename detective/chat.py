@@ -24,7 +24,7 @@ from .validator import invalid_citations
 _OBS_CAP = 600  # chars of each observation included in Q&A context
 
 # The web UI reuses exactly these (same grounding rules, same citation validation):
-__all__ = ["run_chat", "classify", "answer_question", "retask", "retask_directive"]
+__all__ = ["run_chat", "classify", "answer_question", "answer_question_events", "retask", "retask_directive"]
 
 
 def _build_material(inv: Investigation) -> str:
@@ -58,21 +58,51 @@ def _classify(llm: LLMClient, text: str) -> str:
     return "retask" if "retask" in (msg.content or "").strip().lower() else "question"
 
 
-def _answer_question(inv: Investigation, llm: LLMClient, question: str) -> str:
+def answer_question_events(inv: Investigation, llm: LLMClient, question: str):
+    """The grounded answer as it is generated: yields ("delta", text) fragments, then — only if the
+    answer cited steps that don't exist — ("replace", corrected_answer) after one correction round,
+    and ("note", warning) if citations are still wrong. Same grounding rules as answer_question;
+    the terminal and the web UI both consume this so the words appear as the model writes them."""
     system = QA_SYSTEM_TEMPLATE.format(full_name=inv.full_name, material=_build_material(inv))
     messages = [{"role": "system", "content": system}, {"role": "user", "content": question}]
-    msg = llm.complete(messages, max_tokens=800)
-    answer = msg.content or "(no answer)"
+    parts: list[str] = []
+    streamer = getattr(llm, "stream", None)
+    if streamer:
+        for piece in streamer(messages, max_tokens=800):
+            parts.append(piece)
+            yield ("delta", piece)
+    else:  # an LLM without streaming (tests, minimal gateways): one fragment
+        piece = llm.complete(messages, max_tokens=800).content or ""
+        parts.append(piece)
+        yield ("delta", piece)
+    answer = "".join(parts) or "(no answer)"
+    if not parts:
+        yield ("delta", answer)
     bad = invalid_citations(answer, inv.log)
     if bad:
         messages += [{"role": "assistant", "content": answer},
                      {"role": "user", "content": f"Your answer cites step(s) {bad}, which do not exist in the log. "
                                                  "Correct the citations using only real steps."}]
-        answer = llm.complete(messages, max_tokens=800).content or answer
+        fixed = llm.complete(messages, max_tokens=800).content or answer
+        if fixed != answer:
+            answer = fixed
+            yield ("replace", fixed)
         bad = invalid_citations(answer, inv.log)
         if bad:
-            answer += term.red(f"\n(warning: citations to non-existent steps {bad} — treat those lines with suspicion)")
-    return answer
+            yield ("note", f"(warning: citations to non-existent steps {bad} — treat those lines with suspicion)")
+
+
+def _answer_question(inv: Investigation, llm: LLMClient, question: str) -> str:
+    """The whole answer at once (the one-shot API and tests); built from the same event stream."""
+    answer, notes = "", []
+    for kind, text in answer_question_events(inv, llm, question):
+        if kind == "delta":
+            answer += text
+        elif kind == "replace":
+            answer = text
+        else:
+            notes.append(term.red("\n" + text))
+    return answer + "".join(notes)
 
 
 def retask_directive(directive: str) -> str:
@@ -145,7 +175,15 @@ def run_chat(inv: Investigation, llm: LLMClient, gh) -> None:
                 print(term.yellow("The budget is fully spent — the agent will have to ask for an extension."))
             _retask(inv, llm, gh, text)
         else:
-            print(f"\n{_answer_question(inv, llm, text)}\n")
+            print()
+            for kind, piece in answer_question_events(inv, llm, text):  # streamed as the model writes
+                if kind == "delta":
+                    print(piece, end="", flush=True)
+                elif kind == "replace":
+                    print("\n" + term.dim("(citations corrected)") + "\n" + piece, end="", flush=True)
+                else:
+                    print(term.red("\n" + piece), end="", flush=True)
+            print("\n")
 
 
 # Public aliases for the web UI — one implementation of the grounded Q&A and re-task paths.

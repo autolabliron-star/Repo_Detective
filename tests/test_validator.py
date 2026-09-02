@@ -82,6 +82,8 @@ class TestEvidenceValidation(unittest.TestCase):
         self.assertEqual(invalid_citations("see [step 1] and [step 7]", LOG), [7])
         self.assertEqual(invalid_citations("see [step 2]", LOG), [])
         self.assertEqual(invalid_citations("supported by [steps 1, 2] and [steps 2, 9]", LOG), [9])
+        # a trailing clause inside the bracket is still a citation of that step
+        self.assertEqual(invalid_citations("no risk found [step 2; verdict v1] but [step 4; see log]", LOG), [4])
 
 
 if __name__ == "__main__":

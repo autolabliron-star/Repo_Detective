@@ -71,6 +71,9 @@
   .msg.bot { background:#f3f5f8; }
   .msg.sys { color:var(--muted); font-size:12px; }
   .chat form { display:flex; gap:8px; margin-top:10px; }
+  .cursor { display:inline-block; margin-left:1px; color:#5b6cff; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
   .hint { color:var(--muted); font-size:12px; }
   .empty { color:var(--muted); padding:40px; text-align:center; }
   .ledger li { margin:3px 0; }
@@ -139,9 +142,9 @@
   }
   function d10(s) { return s ? String(s).slice(0, 10) : "?"; }
   function n(x) { return typeof x === "number" ? x.toLocaleString() : "?"; }
-  function stepLinks(text) {  // "[step 7]" and "[steps 2, 3]" → one link per step
-    return esc(text).replace(/\[steps?\s+(\d+(?:\s*,\s*\d+)*)\]/gi, (m, list) =>
-      "[" + list.split(/\s*,\s*/).map(k => `<a class="step-ref" href="#step-${k}">step ${k}</a>`).join(", ") + "]");
+  function stepLinks(text) {  // "[step 7]", "[steps 2, 3]", "[step 18; verdict v1]" → one link per step
+    return esc(text).replace(/\[steps?\s+(\d+(?:\s*,\s*\d+)*)(\s*;[^\]]*)?\]/gi, (m, list, tail) =>
+      "[" + list.split(/\s*,\s*/).map(k => `<a class="step-ref" href="#step-${k}">step ${k}</a>`).join(", ") + (tail || "") + "]");
   }
 
   // ------------------------------ case list ------------------------------ //
@@ -294,9 +297,19 @@
   function sys(text) { (chats[current] ||= []).push({ who: "sys", text }); renderChat(); }
   function renderChat() {
     const log = chats[current] || [];
-    $("#chatlog").innerHTML = log.length ? log.map(m => `<div class="msg ${m.who}">${m.who === "bot" ? stepLinks(m.text) : esc(m.text)}</div>`).join("")
+    $("#chatlog").innerHTML = log.length ? log.map(m => `<div class="msg ${m.who}">${m.who === "bot" ? stepLinks(m.text) : esc(m.text)}${m.live ? '<span class="cursor">▍</span>' : ""}</div>`).join("")
       : `<div class="msg sys">Ask “why did you flag the maintainer situation?” or send the agent back to work: “now check the biggest fork”.</div>`;
     $("#chatlog").scrollTop = $("#chatlog").scrollHeight;
+  }
+  // The answer streams from the server as Server-Sent Events, so the words appear as the model writes them.
+  function applyChatEvent(bubble, ev) {
+    if (ev.kind === "start") { bubble.who = "bot"; bubble.text = ""; bubble.live = true; }
+    else if (ev.kind === "delta") { bubble.text += ev.text; }
+    else if (ev.kind === "replace") { bubble.text = ev.text; }
+    else if (ev.kind === "note") { bubble.text += "\n" + ev.text; }
+    else if (ev.kind === "retask" || ev.kind === "busy") { bubble.who = "sys"; bubble.text = ev.text; if (ev.kind === "retask") setTimeout(() => refresh(true), 800); }
+    else if (ev.kind === "error") { bubble.who = "sys"; bubble.text = `Error: ${ev.text}`; }
+    if (ev.kind === "done" || ev.kind === "error" || ev.kind === "retask" || ev.kind === "busy") bubble.live = false;
   }
   $("#chatform").onsubmit = async (ev) => {
     ev.preventDefault();
@@ -304,13 +317,32 @@
     $("#chatmsg").value = "";
     (chats[current] ||= []).push({ who: "you", text }); renderChat();
     const slug = current;
-    (chats[slug]).push({ who: "sys", text: "…" }); renderChat();
+    const bubble = { who: "sys", text: "…" };
+    chats[slug].push(bubble); renderChat();
     try {
-      const r = await api(`/api/cases/${encodeURIComponent(slug)}/chat`, { message: text });
-      chats[slug].pop();
-      chats[slug].push({ who: r.kind === "answer" ? "bot" : "sys", text: r.text });
-      if (r.kind === "retask") { setTimeout(() => refresh(true), 800); }
-    } catch (e) { chats[slug].pop(); chats[slug].push({ who: "sys", text: `Error: ${e.message}` }); }
+      const r = await fetch(`/api/cases/${encodeURIComponent(slug)}/chat/stream`,
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text }) });
+      if (!r.ok || !r.body) {  // no stream available: fall back to the one-shot endpoint
+        const one = await api(`/api/cases/${encodeURIComponent(slug)}/chat`, { message: text });
+        applyChatEvent(bubble, one.kind === "answer" ? { kind: "start" } : one);
+        if (one.kind === "answer") { bubble.text = one.text; bubble.live = false; }
+      } else {
+        const reader = r.body.getReader(), dec = new TextDecoder();
+        let buf = "";
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          let i;
+          while ((i = buf.indexOf("\n\n")) >= 0) {
+            const frame = buf.slice(0, i); buf = buf.slice(i + 2);
+            const line = frame.split("\n").find(l => l.startsWith("data: "));
+            if (line) { applyChatEvent(bubble, JSON.parse(line.slice(6))); renderChat(); }
+          }
+        }
+      }
+    } catch (e) { bubble.who = "sys"; bubble.text = `Error: ${e.message}`; }
+    bubble.live = false;
     renderChat();
   };
 

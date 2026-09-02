@@ -115,20 +115,49 @@ class Hub:
         entry["decider"].resolve(granted)
         return True
 
-    def chat(self, slug: str, message: str) -> dict | None:
+    def chat_events(self, slug: str, message: str):
+        """The chat as a stream of events (the page renders them as they arrive):
+        {"kind": "retask"|"busy"|"error", text} and we're done, or {"kind": "start"} followed by
+        "delta" fragments of the grounded answer, an optional "replace" (citations corrected),
+        an optional "note" (citations still wrong), then {"kind": "done"}."""
         inv = Investigation.find(self.root, slug)
         if not inv:
-            return None
+            yield {"kind": "error", "text": "no such case"}
+            return
         if chat_mod.classify(self.llm, message) == "retask":
             if slug in self.running:
-                return {"kind": "busy", "text": "The agent is still working on this case — wait for it to finish, then re-task."}
+                yield {"kind": "busy", "text": "The agent is still working on this case — wait for it to finish, then re-task."}
+                return
             remaining = inv.budget_remaining()
             gh = self.gh_factory()
             self._launch(inv.slug, "retask",
                          lambda decider: chat_mod.retask(inv, self.llm, gh, message, decide=decider))
-            return {"kind": "retask", "text": f"Re-tasked — the agent is resuming with {remaining} LLM calls remaining. "
-                                              "Watch the log; a new verdict version appears when it concludes."}
-        return {"kind": "answer", "text": _ANSI.sub("", chat_mod.answer_question(inv, self.llm, message))}
+            yield {"kind": "retask", "text": f"Re-tasked — the agent is resuming with {remaining} LLM calls remaining. "
+                                             "Watch the log; a new verdict version appears when it concludes."}
+            return
+        yield {"kind": "start"}
+        for kind, text in chat_mod.answer_question_events(inv, self.llm, message):
+            yield {"kind": kind, "text": _ANSI.sub("", text)}
+        yield {"kind": "done"}
+
+    def chat(self, slug: str, message: str) -> dict | None:
+        """One-shot form of chat_events (the JSON endpoint): the same routing, the whole text at once."""
+        text, kind = "", None
+        for ev in self.chat_events(slug, message):
+            k = ev["kind"]
+            if k == "error":
+                return None
+            if k in ("busy", "retask"):
+                return {"kind": k, "text": ev["text"]}
+            if k == "start":
+                kind = "answer"
+            elif k == "delta":
+                text += ev["text"]
+            elif k == "replace":
+                text = ev["text"]
+            elif k == "note":
+                text += "\n" + ev["text"]
+        return {"kind": kind or "answer", "text": text}
 
     # ------------------------------- views ------------------------------- #
 
@@ -181,6 +210,8 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path.rstrip("/") or "/"
         if path == "/":
             return self._send(200, (STATIC_DIR / "index.html").read_bytes(), "text/html; charset=utf-8")
+        if path == "/favicon.ico":  # browsers ask on their own; answer quietly instead of a 404 in the console
+            return self._send(204, b"", "image/x-icon")
         if path == "/api/cases":
             cases = [self.hub.case_summary(i) for i in Investigation.list_all(self.hub.root)]
             cases.sort(key=lambda c: c.get("investigated_at") or "", reverse=True)
@@ -212,7 +243,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(400, {"error": "budget must be a number"})
             slug, err = self.hub.start_investigation(url, budget, bool(body.get("fresh")))
             return self._send(400, {"error": err}) if err else self._send(200, {"slug": slug})
-        m = re.match(r"^/api/cases/([^/]+)/(budget|chat)$", path)
+        m = re.match(r"^/api/cases/([^/]+)/(budget|chat|chat/stream)$", path)
         if m:
             inv = Investigation.find(self.hub.root, m.group(1))
             if not inv:
@@ -228,8 +259,35 @@ class Handler(BaseHTTPRequestHandler):
             message = (body.get("message") or "").strip()
             if not message:
                 return self._send(400, {"error": "message is required"})
+            if m.group(2) == "chat/stream":
+                return self._send_events(self.hub.chat_events(inv.slug, message))
             return self._send(200, self.hub.chat(inv.slug, message))
         self._send(404, {"error": "not found"})
+
+    def _send_events(self, events) -> None:
+        """Server-Sent Events: one `data: {json}` frame per event, flushed as it happens, so the
+        page shows the answer word by word. HTTP/1.0 semantics — the connection closes at the end."""
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Accel-Buffering", "no")
+        self.end_headers()
+
+        def frame(ev: dict) -> bytes:
+            return f"data: {json.dumps(ev, ensure_ascii=False)}\n\n".encode()
+
+        try:
+            for ev in events:
+                self.wfile.write(frame(ev))
+                self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # the reader went away; nothing to tell it
+        except (Exception, SystemExit) as exc:  # a provider error mid-chat becomes a visible event
+            try:
+                self.wfile.write(frame({"kind": "error", "text": str(exc) or exc.__class__.__name__}))
+                self.wfile.flush()
+            except OSError:
+                pass
 
 
 def make_server(host: str, port: int, hub: Hub) -> ThreadingHTTPServer:

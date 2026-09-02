@@ -21,7 +21,8 @@ MIN_QUOTE_CHARS = 10
 MIN_FRAGMENT_CHARS = 5
 
 # "[step 7]" and the plural the model likes to write, "[steps 2, 3]"
-_CITATION_RE = re.compile(r"\[steps?\s+(\d+(?:\s*,\s*\d+)*)\]", re.IGNORECASE)
+# "[step 7]", "[steps 2, 3]", and "[step 18; verdict v1]" (a trailing clause after ';' is allowed)
+_CITATION_RE = re.compile(r"\[steps?\s+(\d+(?:\s*,\s*\d+)*)(?:\s*;[^\]]*)?\]", re.IGNORECASE)
 # "...", "…", "[...]" or "(...)" inside a quote marks skipped text.
 _ELLIPSIS_RE = re.compile(r"\s*(?:[\[(]\s*(?:\.{3,}|…)\s*[\])]|\.{3,}|…)\s*")
 

@@ -167,6 +167,39 @@ class LLMClient:
                     time.sleep(2 ** attempt)
         raise SystemExit(f"LLM provider unreachable after retries: {last_exc}")
 
+    def stream(self, messages: list[dict], max_tokens: int = DEFAULT_MAX_TOKENS):
+        """Yield the assistant's visible text as it is generated — the chat's Q&A path, so it is
+        uncounted and mounts no tools. If the endpoint refuses to stream (or fails before the first
+        token), falls back to one complete() response, which carries the provider adaptations."""
+        kwargs: dict = {"model": self.model, "messages": messages, "stream": True}
+        if self._supports_temperature:
+            kwargs["temperature"] = 0.2
+        if self._reasoning_effort:
+            kwargs["reasoning_effort"] = self._reasoning_effort
+        kwargs[self._max_tokens_param] = self._cap(max_tokens)
+        got_any = False
+        try:
+            finish = None
+            for chunk in self.client.chat.completions.create(**kwargs):
+                choices = getattr(chunk, "choices", None) or []
+                if not choices:
+                    continue
+                choice = choices[0]
+                delta = getattr(choice, "delta", None)
+                text = getattr(delta, "content", None) if delta is not None else None
+                if text:
+                    got_any = True
+                    yield text
+                if getattr(choice, "finish_reason", None):
+                    finish = choice.finish_reason
+            if got_any:
+                self.last_finish_reason = finish
+                return
+        except Exception:
+            if got_any:  # the stream broke mid-answer — don't restart and duplicate what was shown
+                raise
+        yield self.complete(messages, max_tokens=max_tokens).content or ""
+
     # ------------------------------------------------------------------ #
 
     def _cap(self, max_tokens: int) -> int:
