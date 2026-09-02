@@ -151,3 +151,7 @@ and URL parsing.
 ## Design decisions
 
 See [DECISIONS.md](DECISIONS.md).
+
+## License
+
+MIT — see [LICENSE](LICENSE).
