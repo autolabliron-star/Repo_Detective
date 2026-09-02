@@ -17,8 +17,9 @@ docker compose up         # → open http://localhost:8000
   verify and says what it couldn't (see *Grace under fire*). The token is optional; nothing else
   needs an account.
 - **Port 8000 taken?** `DETECTIVE_PORT=8001 docker compose up`
-- **Want to read the three graded cases before spending a call?** `cp -r examples/*__* investigations/`
-  and refresh the page — the stored case files open in the UI, and `chat` works on them.
+- **About `examples/`:** the case files from my own runs of the three graded repositories, for
+  reading. The agent never reads this folder and the Docker image does not include it — every case
+  you see in the UI is investigated live, on your machine, with your key.
 - **Local model (Ollama, vLLM, LM Studio)?** From inside Docker the host is
   `host.docker.internal`, not `localhost` — e.g. `OPENAI_BASE_URL=http://host.docker.internal:11434/v1`.
 
@@ -133,7 +134,7 @@ detective/
   chat.py             grounded Q&A + re-tasking
   web.py, static/     the web UI (standard library only; one HTML file)
 investigations/       one directory per case: state.json, report.md
-examples/             case files from the three test repositories, as investigated
+examples/             case files from the three test repositories, as investigated (reference only; never read by the agent)
 ```
 
 ## Tests

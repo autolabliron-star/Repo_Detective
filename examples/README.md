@@ -11,6 +11,12 @@ the exact message history the agent saw.
 | [request/request](request__request/report.md) | 🛑 reject · high (v1 at 4 calls; v2 unchanged after the re-task "now check the biggest fork") | 9 | 41 |
 | [RIAEvangelist/node-ipc](riaevangelist__node-ipc/report.md) | 🛑 reject · high | 6 | 25 |
 
+Verdicts are dated. The agent reads live data, so a run on another day can differ: on the evening of
+2026-09-02 two new advisories on express's `qs` dependency (CVE-2026-82417 and CVE-2026-82562, both
+fixed in qs 6.16.0) moved express from *adopt* to *adopt with conditions*. That is the point — the
+verdict follows what the API returns on the day, not the repository's reputation. Nothing in the
+code reads this folder.
+
 Read node-ipc's log for the shape of a real investigation: OSV's malicious-code records → an
 empty commit window in March 2022 (the repository was recreated) → the May 2026 breach commit →
 the historical README at that commit → the verified infostealer issue → the owner's profile and
