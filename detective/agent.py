@@ -17,6 +17,7 @@ pause. Design points:
 from __future__ import annotations
 
 import json
+import re
 import sys
 
 from . import term
@@ -62,6 +63,24 @@ def _extract_error(observation: str) -> str | None:
     return None
 
 
+_REASONING_RE = re.compile(r'"reasoning"\s*:\s*"((?:[^"\\]|\\.)*)"')
+
+
+def _salvage_reasoning(raw: str) -> str:
+    """Pull the case notes out of arguments that failed to parse (truncated JSON) so the log keeps the 'why'."""
+    m = _REASONING_RE.search(raw or "")
+    if not m:
+        return ""
+    try:
+        return json.loads(f'"{m.group(1)}"')
+    except json.JSONDecodeError:
+        return m.group(1)
+
+
+COMPACT_HINT = ("Re-issue it COMPACTLY: for render_verdict keep the summary to 3 sentences, at most 6 evidence "
+                "items, and each data_point a SHORT verbatim fragment (10-120 chars) — not whole lines.")
+
+
 def repair_messages(inv: Investigation) -> None:
     """If a previous run died between the assistant message and its tool results,
     the history ends with unanswered tool_calls — the API would reject it."""
@@ -71,6 +90,17 @@ def repair_messages(inv: Investigation) -> None:
             _tool_result(inv, tc["id"], tc["function"]["name"],
                          "ERROR (interrupted): the previous session ended before this ran — re-issue if still needed.")
         inv.save()
+
+
+def _stream_call_header(inv: Investigation, msg, finish: str | None, wrapup: bool) -> None:
+    """One line per LLM call so a reader can see that steps are batched — 38 steps is not 38 calls."""
+    n = len(msg.tool_calls or [])
+    label = f"LLM call {inv.budget_used()}/{inv.budget_granted()} · {n} tool call{'s' if n != 1 else ''}"
+    if wrapup:
+        label += " · wrap-up (render_verdict only)"
+    if finish == "length":
+        label += term.red(" · OUTPUT TRUNCATED")
+    print(f"\n{term.dim('── ' + label)}")
 
 
 def _stream_step(entry: dict) -> None:
@@ -250,12 +280,15 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
                 continue
             inv.messages.append({"role": "user", "content":
                                  "[budget controller] Extension denied. You have exactly 1 call: "
-                                 "render_verdict now, marking unverified gaps."})
+                                 "render_verdict now, marking unverified gaps. Keep it compact — at most 6 "
+                                 "evidence items with short verbatim quotes."})
             inv.save()
             continue
 
+        finish = getattr(llm, "last_finish_reason", None)
         inv.messages.append(_serialize_assistant(msg))
         inv.save()
+        _stream_call_header(inv, msg, finish, wrapup)
 
         if wrapup and not any(tc.function.name == "render_verdict" for tc in (msg.tool_calls or [])):
             inv.set_status(STATUS_NO_VERDICT)
@@ -286,7 +319,17 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
             try:
                 args = json.loads(tc.function.arguments or "{}")
             except json.JSONDecodeError as exc:
-                _tool_result(inv, tc.id, name, f"ERROR (bad_arguments): could not parse arguments as JSON ({exc}). Re-issue the call.")
+                raw = tc.function.arguments or ""
+                if finish == "length":
+                    observation = ("ERROR (truncated): your response hit the output-length limit in the middle of these "
+                                   f"arguments ({len(raw):,} chars emitted), so the call could not be parsed. " + COMPACT_HINT)
+                else:
+                    observation = f"ERROR (bad_arguments): could not parse arguments as JSON ({exc}). {COMPACT_HINT}"
+                entry = inv.add_log(phase=phase, tool=name, args={"unparseable_arguments_chars": len(raw)},
+                                    reasoning=_salvage_reasoning(raw), observation=observation,
+                                    api_requests=0, error=_extract_error(observation))
+                _stream_step(entry)
+                _tool_result(inv, tc.id, name, observation)
                 continue
 
             if concluded:
@@ -307,10 +350,17 @@ def run_investigation(inv: Investigation, llm: LLMClient, gh, phase: str = "init
             else:
                 _tool_result(inv, tc.id, name, f"ERROR (unknown_tool): no tool named '{name}'.")
 
-        # Budget note rides on the last tool result of the batch — no extra message, no extra tokens wasted.
+        # Budget (and, when it matters, GitHub quota) notes ride on the last tool result of the batch —
+        # no extra message, no extra tokens wasted.
         if inv.messages[-1].get("role") == "tool":
             inv.messages[-1]["content"] += (f"\n\n[budget: {inv.budget_used()}/{inv.budget_granted()} LLM calls used "
                                             f"— {inv.budget_remaining()} remaining]")
+            quota = gh.quota() if hasattr(gh, "quota") else {}
+            left = quota.get("remaining")
+            if not quota.get("authenticated") and isinstance(left, int) and left < 15:
+                inv.messages[-1]["content"] += (f"\n[GitHub anonymous quota: {left} requests left, resets "
+                                                f"{quota.get('resets_at')} — a rate limit is imminent; spend them on "
+                                                "the decisive lookups or conclude on what you have]")
         inv.save()
 
         if concluded:

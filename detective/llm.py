@@ -8,6 +8,12 @@ don't count. Chat Q&A passes budget=None — uncounted by design.
 
 Provider-agnostic: reads OPENAI_API_KEY / OPENAI_BASE_URL / OPENAI_MODEL, and
 adapts when a provider rejects temperature or max_tokens.
+
+Output cap: the verdict JSON is the longest thing the agent ever emits (a
+summary plus verbatim evidence quotes). A 1024-token cap silently truncated it
+in the first live run and the retry loop looked exactly like budget creep — so
+the default is generous, and last_finish_reason exposes "length" so the loop
+can tell the model to compress instead of blindly re-issuing.
 """
 
 from __future__ import annotations
@@ -52,9 +58,10 @@ class LLMClient:
         self.client = OpenAI(api_key=key, base_url=base)
         self._supports_temperature = True
         self._max_tokens_param = "max_tokens"
+        self.last_finish_reason: str | None = None
 
     def complete(self, messages: list[dict], tools: list[dict] | None = None,
-                 budget=None, max_tokens: int = 1024, tool_choice=None):
+                 budget=None, max_tokens: int = 4096, tool_choice=None):
         """Returns the assistant message. `budget` is a duck-typed object with
         .remaining() and .count() (the Investigation) — None means uncounted.
         `tool_choice` may force a specific function (the wrap-up call)."""
@@ -75,7 +82,9 @@ class LLMClient:
                 resp = self.client.chat.completions.create(**kwargs)
                 if budget is not None:
                     budget.count()
-                return resp.choices[0].message
+                choice = resp.choices[0]
+                self.last_finish_reason = choice.finish_reason  # "length" == output was truncated
+                return choice.message
             except BadRequestError as exc:
                 text = str(exc)
                 # Some providers/models reject these params; adapt once and retry (not counted as an attempt).

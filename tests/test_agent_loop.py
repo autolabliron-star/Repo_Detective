@@ -20,28 +20,33 @@ class FakeFunction:
 
 
 class FakeToolCall:
-    def __init__(self, i, name, arguments):
+    def __init__(self, i, name, arguments, raw=None):
         self.id = f"call_{i}"
         self.function = FakeFunction(name, arguments)
+        if raw is not None:  # simulate a provider handing back cut-off JSON
+            self.function.arguments = raw
 
 
 class FakeMsg:
-    def __init__(self, tool_calls=None, content=None):
+    def __init__(self, tool_calls=None, content=None, finish_reason="tool_calls"):
         self.content = content
         self.tool_calls = tool_calls
+        self.finish_reason = finish_reason
 
 
 class FakeLLM:
     def __init__(self, script):
         self.script = list(script)
+        self.last_finish_reason = None
 
-    def complete(self, messages, tools=None, budget=None, max_tokens=1024, tool_choice=None):
+    def complete(self, messages, tools=None, budget=None, max_tokens=4096, tool_choice=None):
         check_budget(budget)
         self.last_tools = tools
         self.last_tool_choice = tool_choice
         msg = self.script.pop(0)
         if budget is not None:
             budget.count()
+        self.last_finish_reason = msg.finish_reason
         return msg
 
 
@@ -156,6 +161,34 @@ class TestAgentLoop(unittest.TestCase):
         self.assertEqual([t["function"]["name"] for t in llm.last_tools], ["render_verdict"])
         self.assertEqual(llm.last_tool_choice["function"]["name"], "render_verdict")
         self.assertIn("none rendered", (inv.dir / "report.md").read_text())
+
+    def test_truncated_verdict_is_logged_and_agent_told_to_compress(self):
+        """Regression from the first live run: a verdict cut off by the output cap came back as
+        'bad arguments, re-issue' and the model re-issued the same oversized verdict 8 times."""
+        inv = make_inv(budget=5)
+        cut_off = ('{"reasoning": "wrapping up the case", "decision": "adopt", "summary": "fine", '
+                   '"evidence": [{"claim": "x", "step_id": 1, "data_point": "solo: 95 com')
+        script = [
+            FakeMsg(tool_calls=[FakeToolCall(1, "list_contributors",
+                                             {"reasoning": "start", "owner": "acme", "repo": "widget"})]),
+            FakeMsg(tool_calls=[FakeToolCall(2, "render_verdict", {}, raw=cut_off)], finish_reason="length"),
+            FakeMsg(tool_calls=[FakeToolCall(3, "render_verdict", {
+                "reasoning": "compact retry", "decision": "adopt", "summary": "fine",
+                "evidence": [{"claim": "solo dominates", "step_id": 1, "data_point": VERBATIM}],
+            })]),
+        ]
+        run_investigation(inv, FakeLLM(script), FakeGH())
+
+        self.assertEqual(inv.status, STATUS_CONCLUDED)
+        truncated = [e for e in inv.log if e["error"] == "truncated"]
+        self.assertEqual(len(truncated), 1)
+        self.assertEqual(truncated[0]["reasoning"], "wrapping up the case")  # salvaged from the broken JSON
+        feedback = [m for m in inv.messages if m["role"] == "tool" and "truncated" in m["content"]]
+        self.assertIn("COMPACTLY", feedback[0]["content"])
+        self.assertEqual(inv.budget_used(), 3)
+        # steps remember which LLM call produced them
+        self.assertEqual([e["call"] for e in inv.log], [1, 2, 3])
+        self.assertIn("LLM call 2", (inv.dir / "report.md").read_text())
 
     def test_resume_repairs_interrupted_history(self):
         inv = make_inv(budget=3)

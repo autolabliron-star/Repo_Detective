@@ -17,8 +17,18 @@ frameworks hide. Design choices that matter:
   counter lives in a single choke point (`llm.py`); chat Q&A passes `budget=None` — the spec
   budgets the *investigation*, and chat is over a finished one. Re-task resumption **does** count.
 - **Reserved pitch:** the pause pitch itself costs a call, so at 2 remaining the agent is told to
-  conclude or make its case. A denial grants exactly **1 wrap-up call** — you always get a
-  verdict, never a crash or a silent overrun. The pause is persisted state, so it survives Ctrl-C.
+  conclude or make its case. A denial grants exactly **1 wrap-up call** that mounts *only*
+  `render_verdict` (forced tool choice) — you always get a verdict, never a crash or a silent
+  overrun, and the stop is mechanical rather than an instruction the model may ignore. The pause
+  is persisted state, so it survives Ctrl-C.
+- **Two lessons from the first live run.** The healthy baseline (express) ended at 36 calls with no
+  verdict. Not budget creep: the agent *had* concluded at call 29, but the verdict JSON — the
+  longest thing it ever emits — was cut off by a 1024-token output cap, and our "bad arguments,
+  re-issue" feedback made it re-emit the same oversized verdict eight times. Now the cap is
+  generous, truncation is detected from `finish_reason`, the failed call is a visible log step,
+  and the model is told to *compress*. Second: a case-sensitive 404 (`README.md` vs `Readme.md`)
+  became the finding "no README" — so a 404 now lists the directory. Tools must not manufacture
+  anomalies.
 - **Evidence over memory, mechanically:** the LLM knows these repos' folklore, so prompting
   "don't use memory" isn't enough. Every evidence item must quote the cited step's output
   *verbatim*; a whitespace-normalized substring check rejects anything else and the agent must

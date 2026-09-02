@@ -47,7 +47,10 @@ python -m detective list
      tool calls it batches. When the budget runs out — or the agent decides it can't conclude —
      it pauses and pitches the human: what it has, what it still needs, how many calls. You
      approve, adjust, or deny (denial grants exactly one wrap-up call so you always get a verdict).
-   - **Every step is logged** — what it did, why, and what it found — and streamed live.
+   - **Every step is logged** — what it did, why, and what it found — and streamed live. One
+     call can batch several tool calls, so step numbers run past 30 while the call counter
+     doesn't; the stream prints an `LLM call N/30` header per response and the report's budget
+     ledger reconciles the two.
 3. **The verdict + report.** `render_verdict` is validated mechanically: every evidence item must
    quote the cited step's output *verbatim*, or the call is rejected and the agent must re-cite.
    The LLM may know these repos' folklore; the verdict can only be built from what the tools
@@ -75,11 +78,14 @@ Renamed repos are followed to their canonical name (and logged). 404 / DMCA exit
 message. Empty repos, archived repos, and rate limits become structured observations the agent
 reasons about — the report says what *couldn't* be verified instead of inventing it.
 
-GitHub's anonymous quota is 60 requests/hour. The client keeps an on-disk response cache: within
-a 15-minute freshness window (`DETECTIVE_CACHE_TTL`) repeat requests cost **zero** quota, and
-after it ETag revalidation keeps the cache correct — so re-running the same repos barely consumes
-quota. The current quota is shown at intake, and a mid-run rate limit becomes an observation the
-agent reasons about rather than a crash.
+GitHub's anonymous quota is 60 requests/hour and **one investigation uses ~40**, so two repos back
+to back will run into the limit. Intake warns when the quota won't cover a full run, the agent is
+told when a rate limit is imminent, and a mid-run 403 becomes an observation it reasons about
+rather than a crash — the report then says what couldn't be verified. If you're going to run
+several repositories in one sitting, put a free `GITHUB_TOKEN` (no scopes needed) in `.env`:
+5,000 requests/hour. The client also keeps an on-disk response cache: within a 15-minute freshness
+window (`DETECTIVE_CACHE_TTL`) repeat requests cost **zero** quota, and after it ETag revalidation
+keeps the cache correct.
 
 ## Repo layout
 
@@ -105,8 +111,10 @@ investigations/       one directory per case: state.json, report.md
 python -m unittest discover -s tests -v
 ```
 
-Covers the budget invariants (used ≤ granted, exhaustion raises, denial grants one wrap-up
-call), the evidence validator (fabricated quotes rejected), and URL parsing.
+Covers the budget invariants (used ≤ granted, exhaustion raises, denial grants exactly one
+wrap-up call and can't creep), the evidence validator (fabricated quotes rejected), the agent
+loop end-to-end with a scripted LLM (including a verdict truncated by the output cap), the
+tool trimmers, and URL parsing.
 
 ## Design decisions
 

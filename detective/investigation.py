@@ -136,6 +136,7 @@ class Investigation:
         entry = {
             "id": len(self.state["log"]) + 1,
             "ts": _now(),
+            "call": self.budget_used(),  # which LLM call produced this step (several steps can share one call)
             "phase": phase,
             "tool": tool,
             "args": args,

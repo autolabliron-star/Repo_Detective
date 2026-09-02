@@ -12,6 +12,8 @@ agent reasons about them; nothing raises into the loop.
 
 from __future__ import annotations
 
+import json
+
 from ..github_client import GitHubClient
 
 MAX_COMMITS = 30
@@ -242,13 +244,37 @@ def list_releases(gh: GitHubClient, a: dict) -> tuple[str, int]:
     return "no GitHub releases and no tags — nothing has ever been versioned here.", 2
 
 
+def _file_not_found(gh: GitHubClient, a: dict, params: dict | None) -> tuple[str, int]:
+    """GitHub paths are case-sensitive (express keeps `Readme.md`, not `README.md`). One 404 must not
+    become the finding "the project has no README" — list the directory so the agent can correct itself."""
+    path = a["path"].strip("/")
+    ref = a.get("ref") or "default branch"
+    parent = path.rsplit("/", 1)[0] if "/" in path else ""
+    listing = gh.get(f"/repos/{a['owner']}/{a['repo']}/contents/{parent}", params=params)
+    if not listing["ok"] or not isinstance(listing["data"], list):
+        return (f"ERROR (not_found): no file '{path}' at {ref}, and the directory '{parent or '/'}' could not be "
+                f"listed ({listing.get('error', 'not a directory')})."), 1 + listing.get("api_requests", 1)
+    names = [e.get("name", "") for e in listing["data"]]
+    wanted = path.rsplit("/", 1)[-1].lower()
+    stem = wanted.split(".")[0]
+    close = [n for n in names if n.lower() == wanted or (stem and n.lower().split(".")[0] == stem)]
+    hint = f" Did you mean {', '.join(close)}? (paths are case-sensitive)" if close else ""
+    shown = ", ".join(names[:40]) + (f" … ({len(names) - 40} more)" if len(names) > 40 else "")
+    return (f"ERROR (not_found): no file '{path}' at {ref}.{hint}\n"
+            f"Directory '{parent or '/'}' contains: {shown}"), 1 + listing.get("api_requests", 1)
+
+
 def get_file(gh: GitHubClient, a: dict) -> tuple[str, int]:
     params = {"ref": a["ref"]} if a.get("ref") else None
     res = gh.get(f"/repos/{a['owner']}/{a['repo']}/contents/{a['path']}",
                  params=params, accept="application/vnd.github.raw+json")
     if not res["ok"]:
+        if res.get("error") == "not_found":
+            return _file_not_found(gh, a, params)
         return _err(res)
-    text = res["data"] if isinstance(res["data"], str) else str(res["data"])
+    data = res["data"]
+    # Some gateways parse JSON files (package.json) into objects — render them back as JSON, never as a Python repr.
+    text = data if isinstance(data, str) else json.dumps(data, indent=1, ensure_ascii=False)
     header = f"{a['path']} @ {a.get('ref') or 'default branch'} ({len(text):,} chars):"
     if len(text) > MAX_FILE_CHARS:
         return f"{header}\n{text[:MAX_FILE_CHARS]}\n...[truncated — {len(text) - MAX_FILE_CHARS:,} more chars]", 1

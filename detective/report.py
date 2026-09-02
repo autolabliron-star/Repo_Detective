@@ -95,13 +95,19 @@ def render_markdown(inv: Investigation) -> str:
     lines.append("")
 
     # --------------------------- investigation ------------------------- #
-    lines += ["## The Investigation", ""]
+    lines += ["## The Investigation", "",
+              "_One LLM call can batch several tool calls, so step numbers run past the call count; "
+              "each call is marked below._", ""]
     current_phase = None
+    current_call = None
     for entry in inv.log:
         if entry["phase"] != current_phase:
             current_phase = entry["phase"]
             if current_phase != "initial":
                 lines += [f"### ↩︎ Re-tasked: “{current_phase.removeprefix('retask: ')}”", ""]
+        if entry.get("call") is not None and entry["call"] != current_call:
+            current_call = entry["call"]
+            lines += [f"<sub>LLM call {current_call}</sub>", ""]
         args_str = json.dumps({k: v for k, v in entry["args"].items()}, ensure_ascii=False)
         lead = "  ← *following a lead beyond the repo*" if _is_lead(inv, entry) else ""
         lines.append(f"**Step {entry['id']}** · `{entry['tool']}{args_str}`{lead}")
@@ -118,7 +124,9 @@ def render_markdown(inv: Investigation) -> str:
     b = inv.state["budget"]
     lines += ["## Budget ledger", "",
               f"- Initial budget: {b['initial']} LLM calls · used: {b['used']} · "
-              f"remaining: {inv.budget_remaining()}"]
+              f"remaining: {inv.budget_remaining()}",
+              f"- {len(inv.log)} investigation steps in {b['used']} LLM calls "
+              f"(a call that batches N tool calls produces N steps but costs 1)"]
     for e in b["extensions"]:
         lines.append(f"- Extension: requested {e['requested']}, granted {e['granted']} "
                      f"({e['decided_by']}) — “{e['argument'][:120]}”")

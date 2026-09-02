@@ -102,10 +102,11 @@ def run_intake(gh: GitHubClient, url: str) -> tuple[dict | None, str | None]:
         warnings.append(contributors_note)
 
     quota = gh.quota()
-    if not quota["authenticated"] and quota["remaining"] is not None and quota["remaining"] < 25:
+    if not quota["authenticated"] and quota["remaining"] is not None and quota["remaining"] < 40:
         warnings.append(
-            f"low GitHub anonymous quota: {quota['remaining']} requests left (resets {quota['resets_at']}) — "
-            "the agent may hit the rate limit mid-investigation"
+            f"low GitHub anonymous quota: {quota['remaining']} requests left (resets {quota['resets_at']}); "
+            "a full investigation needs ~40 — expect rate-limit errors mid-way and conclude on what you can verify "
+            "(a free GITHUB_TOKEN in .env raises the limit to 5,000/h)"
         )
 
     intake = {
