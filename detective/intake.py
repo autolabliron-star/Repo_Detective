@@ -44,8 +44,8 @@ def run_intake(gh: GitHubClient, url: str) -> tuple[dict | None, str | None]:
         reasons = {
             "not_found": f"GitHub returned 404 for {owner}/{repo} — the repository does not exist or is private. Nothing to investigate.",
             "unavailable_legal": f"{owner}/{repo} is unavailable for legal reasons (HTTP 451 / DMCA takedown). That itself is a strong supply-chain signal, but there is no data to investigate.",
-            "rate_limited": f"Cannot start: {res['message']}" + (f" Quota resets {res.get('resets_at')}." if res.get("resets_at") else ""),
-            "network": f"Cannot reach GitHub: {res['message']}",
+            "rate_limited": f"{res['message']}." + (f" Quota resets {res.get('resets_at')} — retry then, or set GITHUB_TOKEN." if res.get("resets_at") else ""),
+            "network": f"cannot reach GitHub: {res['message']}",
             "bad_credentials": res["message"],
         }
         return None, reasons.get(res["error"], f"GitHub error ({res['error']}): {res['message']}")
