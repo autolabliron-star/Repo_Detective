@@ -124,7 +124,9 @@ examples/             case files from the three test repositories, as investigat
 ## Tests
 
 ```bash
-python -m unittest discover -s tests -v
+pip install -r requirements.txt && python -m unittest discover -s tests -v
+# or without installing anything:
+docker compose run --rm -v ./tests:/app/tests --entrypoint python detective -m unittest discover -s tests
 ```
 
 Covers the budget invariants (used ≤ granted, exhaustion raises, denial grants exactly one
